@@ -4,7 +4,7 @@
 #include <time.h>
 
 //色指定(共通）-----------------------------------------------------------------------------------------------------------------------
-unsigned int Bk, Bl, Wh, Gl, Gr, Dr, Lg, Dg, Ld, Lr, Lb, Db, LLb, Pi, Ly, Yl;
+unsigned int Bk, Bl, Wh, Gl, Gr, Dr, Lg, Dg, Ld, Lr, Lb, Db, LLb, Pi, Ly, Yl, Rd;
 #define Wh GetColor(255, 255, 255) //白
 #define Bk GetColor(0, 0, 0)       //黒9
 #define Gl GetColor(102, 102, 102) //灰色
@@ -21,6 +21,8 @@ unsigned int Bk, Bl, Wh, Gl, Gr, Dr, Lg, Dg, Ld, Lr, Lb, Db, LLb, Pi, Ly, Yl;
 #define Pi GetColor(255, 153, 238) //ピンク
 #define Ly GetColor(255, 255, 200) //明るい黄色
 #define Yl GetColor(255, 255, 0)   //黄色	
+#define Rd GetColor(255, 0, 0)	   //赤色
+
 
 //画面大きさ（横×縦）330×250 pixel　（共通）----------------------------------------------------------------------------------------
 //上画面
@@ -104,6 +106,8 @@ typedef struct {
 void ScreenReset();
 void MoveCreate(Move* Move_Machine);
 void PokemonCreate(Pokemon *pokemon, Move* Move_Machine);
+void EnemyTextHpgauge(EnemyPokemon* enemypokemon);
+void MyTextHpgauge(MyPokemon* mypokemon);
 int Select1(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon);
 int Select2(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon);
 int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon);
@@ -116,7 +120,7 @@ void Myturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon);
 void Enemyturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon);
 void Abutton();
 int CalcCenterX(int x1, int x2, const char* str);
-void SelectMove(Pokemon* enemypokemon, Pokemon* mypokemon, Move* MyMove);
+void SelectMove(EnemyPokemon* enemypokemon, MyPokemon* mypokemon, Move* MyMove);
 
 //上記共通のため変更しない------------------------------------------------------------------------------------------------------------
 
@@ -158,15 +162,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//トレーナーの名前生成
 	Trainer TrainerName[2] = { "野獣先輩","せいじ" };
+	SetFontSize(22);
 	DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ポケモントレーナーの %sが\nしょうぶを しかけてきた！", TrainerName[0]);
 	Abutton();
+	SetFontSize(22);
 	DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 	DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ポケモントレーナーの %sは\n%sを くりだした！", TrainerName[0], enemypokemon[EnemyPokemonNumber].pokemon.name);
+	EnemyTextHpgauge(enemypokemon);
 	Abutton();
+	SetFontSize(22);
 	DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 	DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ゆけっ！ %s！", mypokemon[MyPokemonNumber].pokemon.name);
+	MyTextHpgauge(mypokemon);
 	Abutton();
-
+	SetFontSize(22);
 
 	//画面選択(初期画面(1))
 	int flg = 1;
@@ -221,15 +230,15 @@ void ScreenReset() {
 	//上画面描画------------------------------------------------------------
 	DrawBoxAA(150, 30, 500, 300, Bk, FALSE);	//上画面外枠
 	LoadGraphScreen(UP_x1, UP_y1, "ビーチ.jpg", FALSE);
-	LoadGraphScreen(UP_x1+30, UP_y1+100, "ビリオン.png",TRUE);
+	LoadGraphScreen(UP_x1 + 30, UP_y1 + 100, "ビリオン.png",TRUE);
 	LoadGraphScreen(UP_x1 + 100, UP_y1 + 90, "めんつゆ.png", TRUE);
-	LoadGraphScreen(UP_x1 + 200, UP_y1 + 30, "かぼやん.png", TRUE);
+	LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, "かぼやん.png", TRUE);
 	DrawBoxAA(UP_x1, UP_y1+190, UP_x2, UP_y2, Bk, TRUE);	//テキスト部
 	DrawBoxAA(UP_x1+5, UP_y1 + 190+5, UP_x2-5, UP_y2-5, Wh, TRUE);	//テキスト部
 	DrawBoxAA(UP_x1, UP_y1, UP_x2, UP_y2, Bk, FALSE);	//上画面内枠
 
 	//スピーカー
-	int i, j, x, y;
+	float i, j, x, y;
 	for (i = 0; i <= 2; i++) {
 		for (j = 0; j <= 1; j++) {
 			x = i * 25;
@@ -325,6 +334,7 @@ void PokemonCreate(Pokemon* pokemon, Move* Move_Machine) {
 void Screen1() {
 
 	//下画面内枠
+	DrawBoxAA(151, 391, 499, 659, Wh, TRUE);	//下画面外枠
 	DrawBoxAA(DW_x1, DW_y1, DW_x2, DW_y2, Wh, TRUE);	
 
 	//・上のほうの背景
@@ -382,6 +392,7 @@ void Screen1() {
 //画面2描画処理--------------------------------------------------------------------------------------------------------
 void Screen2(MyPokemon* mypokemon) {
 
+	DrawBoxAA(151, 391, 499, 659, Wh, TRUE);	//下画面外枠
 	DrawBoxAA(DW_x1, DW_y1, DW_x2, DW_y2, Wh,TRUE);	//下画面内枠
 	
 	//・上のほうの背景
@@ -401,6 +412,7 @@ void Screen2(MyPokemon* mypokemon) {
 	DrawBoxAA(170, 440, 315, 505, Ld, TRUE);
 	DrawFormatString(x, 445, Bk, "%s", mypokemon[MyPokemonNumber].pokemon.MV1.name);
 	DrawFormatString(220, 475, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV1.MoveCount,mypokemon[MyPokemonNumber].pokemon.MV1.MAXMoveCount);
+	
 	//・技右上座標
 	x1 = 335;
 	x2 = 480;
@@ -411,6 +423,7 @@ void Screen2(MyPokemon* mypokemon) {
 	DrawBoxAA(335, 440, 480, 505, Ld, TRUE);
 	DrawFormatString(x, 445, Bk, "%s", mypokemon[MyPokemonNumber].pokemon.MV2.name);
 	DrawFormatString(385, 475, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV2.MoveCount, mypokemon[MyPokemonNumber].pokemon.MV2.MAXMoveCount);
+	
 	//・技左下座標
 	x1 = 170;
 	x2 = 315;
@@ -421,6 +434,7 @@ void Screen2(MyPokemon* mypokemon) {
 	DrawBoxAA(170, 525, 315, 590, Ld, TRUE);
 	DrawFormatString(x, 530, Bk, "%s", mypokemon[MyPokemonNumber].pokemon.MV3.name);
 	DrawFormatString(220, 560, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV3.MoveCount, mypokemon[MyPokemonNumber].pokemon.MV3.MAXMoveCount);
+	
 	//・技右下座標
 	x1 = 335;
 	x2 = 480;
@@ -431,12 +445,11 @@ void Screen2(MyPokemon* mypokemon) {
 	DrawBoxAA(335, 525, 480, 590, Ld, TRUE);
 	DrawFormatString(x, 530, Bk, "%s", mypokemon[MyPokemonNumber].pokemon.MV4.name);
 	DrawFormatString(385, 560, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV4.MoveCount, mypokemon[MyPokemonNumber].pokemon.MV4.MAXMoveCount);
+	
 	//・もどる座標
 	DrawBoxAA(160, 600, 490, 650, Lb, TRUE);
 	DrawBoxAA(160, 600, 490, 650, Bk, FALSE);
 	DrawBoxAA(170, 605, 480, 645, Db, TRUE);
-
-
 
 	DrawBoxAA(DW_x1, DW_y1, DW_x2, DW_y2, Gl, FALSE);	//下画面内枠
 
@@ -450,6 +463,7 @@ void Screen2(MyPokemon* mypokemon) {
 //画面3描画処理--------------------------------------------------------------------------------------------------------
 void Screen3(MyPokemon* mypokemon) {
 
+	DrawBoxAA(151, 391, 499, 659, Wh, TRUE);	//下画面外枠
 	DrawBoxAA(DW_x1, DW_y1, DW_x2, DW_y2, Ld, TRUE);	//下画面内枠
 
 	//・ポケモン1体目左座標
@@ -605,12 +619,20 @@ int Select1(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 		//カーソル移動
 		if (cursor == 1) {
 			Screen1();
-			DrawBoxAA(180, 450, 470, 580, Yl, FALSE);
+			//DrawBoxAA(180, 450, 470, 580, Yl, FALSE);
+			LoadGraphScreen(180 - 18, 450 - 18, "カーソル左上.png", TRUE);
+			LoadGraphScreen(470 - 2, 450 - 18, "カーソル右上.png", TRUE);
+			LoadGraphScreen(180 - 18, 580 - 2, "カーソル左下.png", TRUE);
+			LoadGraphScreen(470 - 2, 580 - 2, "カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 2) {
 			Screen1();
-			DrawBoxAA(160, 600, 490, 650, Yl, FALSE);
+			//DrawBoxAA(160, 600, 490, 650, Yl, FALSE);
+			LoadGraphScreen(160 , 600 , "カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 20 , 600 , "カーソル右上.png", TRUE);
+			LoadGraphScreen(160 , 650 - 20 , "カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 20 , 650 - 20 , "カーソル右下.png", TRUE);
 		}
 
 		//初期化
@@ -618,7 +640,6 @@ int Select1(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 		MouseY = 0;
 		MouseInput = 0;
 		LogType = 0;
-		Sleep(100);
 
 	}
 
@@ -801,27 +822,47 @@ int Select2(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 		//カーソル移動
 		if (cursor == 1) {
 			Screen2(mypokemon);
-			DrawBoxAA(165, 435, 320, 510, Yl, FALSE);
+			//DrawBoxAA(165, 435, 320, 510, Yl, FALSE);
+			LoadGraphScreen(165 - 5 , 435 - 5 , "カーソル左上.png", TRUE);
+			LoadGraphScreen(320 - 15, 435 - 5, "カーソル右上.png", TRUE);
+			LoadGraphScreen(165 - 5 , 510 - 15, "カーソル左下.png", TRUE);
+			LoadGraphScreen(320 - 15, 510 - 15, "カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 2) {
 			Screen2(mypokemon);
-			DrawBoxAA(330, 435, 485, 510, Yl, FALSE);
+			//DrawBoxAA(330, 435, 485, 510, Yl, FALSE);
+			LoadGraphScreen(330 - 5, 435 - 5, "カーソル左上.png", TRUE);
+			LoadGraphScreen(485 - 15, 435 - 5, "カーソル右上.png", TRUE);
+			LoadGraphScreen(330 - 5, 510 - 15, "カーソル左下.png", TRUE);
+			LoadGraphScreen(485 - 15, 510 - 15, "カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 3) {
 			Screen2(mypokemon);
-			DrawBoxAA(165, 520, 320, 595, Yl, FALSE);
+			//DrawBoxAA(165, 520, 320, 595, Yl, FALSE);
+			LoadGraphScreen(165 - 5, 520 - 5, "カーソル左上.png", TRUE);
+			LoadGraphScreen(320 - 15, 520 - 5, "カーソル右上.png", TRUE);
+			LoadGraphScreen(165 - 5, 595 - 15, "カーソル左下.png", TRUE);
+			LoadGraphScreen(320 - 15, 595 - 15, "カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 4) {
 			Screen2(mypokemon);
-			DrawBoxAA(330, 520, 485, 595, Yl, FALSE);
+			//DrawBoxAA(330, 520, 485, 595, Yl, FALSE);
+			LoadGraphScreen(330 - 5, 520 - 5, "カーソル左上.png", TRUE);
+			LoadGraphScreen(485 - 15, 520 - 5, "カーソル右上.png", TRUE);
+			LoadGraphScreen(330 - 5, 595 - 15, "カーソル左下.png", TRUE);
+			LoadGraphScreen(485 - 15, 595 - 15, "カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 5) {
 			Screen2(mypokemon);
-			DrawBoxAA(160, 600, 490, 650, Yl, FALSE);
+			//DrawBoxAA(160, 600, 490, 650, Yl, FALSE);
+			LoadGraphScreen(160, 600, "カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 20, 600, "カーソル右上.png", TRUE);
+			LoadGraphScreen(160, 650 - 20, "カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 20, 650 - 20, "カーソル右下.png", TRUE);
 		}
 
 		//初期化
@@ -829,7 +870,6 @@ int Select2(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 		MouseY = 0;
 		MouseInput = 0;
 		LogType = 0;
-		Sleep(100);
 
 	}
 
@@ -1092,37 +1132,66 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 		//カーソル移動
 		if (cursor == 1) {
 			Screen3(mypokemon);
-			DrawBoxAA(160, 410, 323, 470, Yl, FALSE);
+			//DrawBoxAA(160, 410, 323, 470, Yl, FALSE);
+			LoadGraphScreen(160 , 410 , "カーソル左上.png", TRUE);
+			LoadGraphScreen(323 - 20, 410 , "カーソル右上.png", TRUE);
+			LoadGraphScreen(160 , 470 - 20, "カーソル左下.png", TRUE);
+			LoadGraphScreen(323 - 20, 470 - 20, "カーソル右下.png", TRUE);
+
 		}
 
 		else if (cursor == 2) {
 			Screen3(mypokemon);
-			DrawBoxAA(327, 420, 490, 480, Yl, FALSE);
+			//DrawBoxAA(327, 420, 490, 480, Yl, FALSE);
+			LoadGraphScreen(327, 420, "カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 20, 420, "カーソル右上.png", TRUE);
+			LoadGraphScreen(327, 480 - 20, "カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 20, 480 - 20, "カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 3) {
 			Screen3(mypokemon);
-			DrawBoxAA(160, 475, 323, 535, Yl, FALSE);
+			//DrawBoxAA(160, 475, 323, 535, Yl, FALSE);
+			LoadGraphScreen(160, 475, "カーソル左上.png", TRUE);
+			LoadGraphScreen(323 - 20, 475, "カーソル右上.png", TRUE);
+			LoadGraphScreen(160, 535 - 20, "カーソル左下.png", TRUE);
+			LoadGraphScreen(323 - 20, 535 - 20, "カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 4) {
 			Screen3(mypokemon);
-			DrawBoxAA(327, 485, 490, 545, Yl, FALSE);
+			//DrawBoxAA(327, 485, 490, 545, Yl, FALSE);
+			LoadGraphScreen(327, 485, "カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 20, 485, "カーソル右上.png", TRUE);
+			LoadGraphScreen(327, 545 - 20, "カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 20, 545 - 20, "カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 5) {
 			Screen3(mypokemon);
-			DrawBoxAA(160, 540, 323, 600, Yl, FALSE);
+			//DrawBoxAA(160, 540, 323, 600, Yl, FALSE);
+			LoadGraphScreen(160, 540, "カーソル左上.png", TRUE);
+			LoadGraphScreen(323 - 20, 540, "カーソル右上.png", TRUE);
+			LoadGraphScreen(160, 600 - 20, "カーソル左下.png", TRUE);
+			LoadGraphScreen(323 - 20, 600 - 20, "カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 6) {
 			Screen3(mypokemon);
-			DrawBoxAA(327, 550, 490, 610, Yl, FALSE);
+			//DrawBoxAA(327, 550, 490, 610, Yl, FALSE);
+			LoadGraphScreen(327, 550, "カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 20, 550, "カーソル右上.png", TRUE);
+			LoadGraphScreen(327, 610 - 20, "カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 20, 610 - 20, "カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 7) {
 			Screen3(mypokemon);
-			DrawBoxAA(410, 620, 490, 650, Yl, FALSE);
+			//DrawBoxAA(410, 620, 490, 650, Yl, FALSE);
+			LoadGraphScreen(410 - 5, 620 - 5, "カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 15, 620 - 5, "カーソル右上.png", TRUE);
+			LoadGraphScreen(410 - 5, 650 - 15, "カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 15, 650 - 15, "カーソル右下.png", TRUE);
 		}
 
 		//初期化
@@ -1130,7 +1199,6 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 		MouseY = 0;
 		MouseInput = 0;
 		LogType = 0;
-		Sleep(100);
 
 	}
 
@@ -1140,9 +1208,9 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 
 void TurnCheck(MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 
-	srand(time(NULL));
-	int MySPD = ((rand() % 700 * 0.001) + 0.7) * (mypokemon[0].pokemon.SPD);
-	int EnemySPD = ((rand() % 700 * 0.001) + 0.7) * (enemypokemon[EnemyPokemonNumber].pokemon.SPD);
+	srand((unsigned)time(NULL));
+	float MySPD = ((rand() % 600 * 0.001) + 0.7) * (mypokemon[0].pokemon.SPD);
+	float EnemySPD = ((rand() % 600 * 0.001) + 0.7) * (enemypokemon[EnemyPokemonNumber].pokemon.SPD);
 
 	if (MySPD >= EnemySPD) {
 		Myturn(mypokemon, enemypokemon);
@@ -1169,6 +1237,7 @@ void PokemonChange(int MyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokemon
 
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ゆけっ！ %s！", mypokemon[MyPokemonNumber].pokemon.name);
+		MyTextHpgauge(mypokemon);
 		Abutton();
 
 		Enemyturn(mypokemon, enemypokemon);
@@ -1183,33 +1252,37 @@ void Myturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
 	DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 
 	if(MoveNumber == 1){
+		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV1.name); 
-		Abutton();
-		SelectMove(&enemypokemon[EnemyPokemonNumber].pokemon, &mypokemon[MyPokemonNumber].pokemon,&mypokemon[MyPokemonNumber].pokemon.MV1);
+		SelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV1);
 	}
 
 	else if (MoveNumber == 2) {
+		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV2.name);
-		Abutton();
-		SelectMove(&enemypokemon[EnemyPokemonNumber].pokemon, &mypokemon[MyPokemonNumber].pokemon, &mypokemon[MyPokemonNumber].pokemon.MV2);
+		SelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV2);
 	}
 
 	else if (MoveNumber == 3) {
+		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV3.name);
-		Abutton();
-		SelectMove(&enemypokemon[EnemyPokemonNumber].pokemon, &mypokemon[MyPokemonNumber].pokemon, &mypokemon[MyPokemonNumber].pokemon.MV3);
+		SelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV3);
 	}
 
 	else if (MoveNumber == 4) {
+		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV4.name);
-		Abutton();
-		SelectMove(&enemypokemon[EnemyPokemonNumber].pokemon, &mypokemon[MyPokemonNumber].pokemon, &mypokemon[MyPokemonNumber].pokemon.MV4);
+		SelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV4);
 	}
 
 }
 
 void Enemyturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
-	mypokemon[MyPokemonNumber].pokemon.HP -= enemypokemon[EnemyPokemonNumber].pokemon.ATK - mypokemon[MyPokemonNumber].pokemon.DEF;
+	srand((unsigned)time(NULL));
+	DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+	DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", enemypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV1.name);
+	mypokemon[MyPokemonNumber].pokemon.HP -= (50 * ((rand() % 1400 * 0.001) + 0.3));
+	Abutton();
 }
 
 void Abutton() {
@@ -1258,24 +1331,24 @@ int CalcCenterX(int x1,int x2,const char *str)
     return (int)((x1+((x2-x1)/2))-(StrWidth/2));
 }
 
-void SelectMove(Pokemon* enemypokemon,Pokemon* mypokemon,Move* MyMove) {
+void SelectMove(EnemyPokemon* enemypokemon,MyPokemon* mypokemon,Move* MyMove) {
 
 	int AtkNum = 0;
 	float ElementEffect = 0;
 
-	if ((MyMove->Type == 1 && enemypokemon->ELE == 2) ||
-		(MyMove->Type == 2 && enemypokemon->ELE == 3) ||
-		(MyMove->Type == 3 && enemypokemon->ELE == 1) ||
-		(MyMove->Type == 4 && enemypokemon->ELE == 5) ||
-		(MyMove->Type == 5 && enemypokemon->ELE == 4)) {
+	if ((MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
+		(MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
+		(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
+		(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5) ||
+		(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4)) {
 		ElementEffect = 0.7;
 	}
 
-	else if ((MyMove->Type == 2 && enemypokemon->ELE == 1) ||
-		(MyMove->Type == 3 && enemypokemon->ELE == 2) ||
-		(MyMove->Type == 1 && enemypokemon->ELE == 3) ||
-		(MyMove->Type == 5 && enemypokemon->ELE == 4) ||
-		(MyMove->Type == 4 && enemypokemon->ELE == 5)) {
+	else if ((MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
+		(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
+		(MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
+		(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4) ||
+		(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5)) {
 		ElementEffect = 1.3;
 	}
 
@@ -1283,33 +1356,117 @@ void SelectMove(Pokemon* enemypokemon,Pokemon* mypokemon,Move* MyMove) {
 		ElementEffect = 1.0;
 	}
 
-	srand(time(NULL));
+	srand((unsigned)time(NULL));
 
 	//命中率
-	if (MyMove->Hitrate - ((rand() % 100) + 1) >= 0 ){
+	if (MyMove->Hitrate - ((rand() % 100) + 1) >= 0) {
 		switch (MyMove->other) {
-			case 0:
-				AtkNum = ((mypokemon->ATK * MyMove->ATKscale - enemypokemon->DEF) * ElementEffect * (rand() % 700 * 0.001) + 0.7);
+		case 0:
+			AtkNum = ((mypokemon[MyPokemonNumber].pokemon.ATK * MyMove->ATKscale - enemypokemon[EnemyPokemonNumber].pokemon.DEF) * ElementEffect * (rand() % 700 * 0.001) + 0.7);
 		}
 
 
 		//技のカウントを減らす
 		MyMove->MoveCount--;
 
+
 		//HPを減らす
-		enemypokemon->HP = enemypokemon->HP - AtkNum;
+		int HPCount = AtkNum;
 
-		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%d\n", enemypokemon->HP);
-		Abutton();
-
-
+		while (HPCount >= 1) {
+			enemypokemon[EnemyPokemonNumber].pokemon.HP = enemypokemon[EnemyPokemonNumber].pokemon.HP - 1;
+			EnemyTextHpgauge(enemypokemon);
+			HPCount--;
+			Sleep(10);
+		}
 	}
 
 	else {
 		//当たらなかった。
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sには\n当たらなかった！", enemypokemon->name);
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sには\n当たらなかった！", enemypokemon[EnemyPokemonNumber].pokemon.name);
 		Abutton();
 	}
+}
+
+void EnemyTextHpgauge(EnemyPokemon* enemypokemon) {
+
+	ScreenFlip();// 裏画面データを表画面へ反映
+	SetDrawScreen(DX_SCREEN_BACK); // 描画先を裏画面に設定
+
+	SetFontSize(20);
+	SetFontThickness(9);
+	DrawBoxAA(UP_x1, UP_y1 + 25, UP_x1 + 140, UP_y1 + 65, Wh, TRUE);
+	DrawBoxAA(UP_x1, UP_y1 + 25, UP_x1 + 140, UP_y1 + 65, Bk, FALSE);
+	DrawTriangle(UP_x1 + 140, UP_y1 + 45, UP_x1 + 140, UP_y1 + 55, UP_x1 + 155, UP_y1 + 50, Bk, TRUE);
+	DrawFormatString(UP_x1+5, UP_y1 + 25, Bk, "%s", enemypokemon[EnemyPokemonNumber].pokemon.name);
+	//HPバー
+	int  a, b;
+	float HPzahyo;
+	a = enemypokemon[EnemyPokemonNumber].pokemon.HP;
+	b = enemypokemon[EnemyPokemonNumber].pokemon.MAXHP;
+	
+	HPzahyo = ((float)a/(float)b) * 70.0;
+
+	if (HPzahyo >= (70 * 0.5)) {
+		DrawBoxAA(UP_x1 + 65, UP_y1 + 50, UP_x1 + 65 + HPzahyo, UP_y1 + 60, Gr, TRUE);
+	}
+	else if (HPzahyo >= (70 * 0.2)) {
+		DrawBoxAA(UP_x1 + 65, UP_y1 + 50, UP_x1 + 65 + HPzahyo, UP_y1 + 60, Yl, TRUE);
+	}
+	else {
+		DrawBoxAA(UP_x1 + 65, UP_y1 + 50, UP_x1 + 65 + HPzahyo, UP_y1 + 60, Rd, TRUE);
+	}
+
+	DrawBoxAA(UP_x1 + 65, UP_y1 + 50, UP_x1 + 135, UP_y1 + 60, Bk, FALSE);
+	SetFontSize(7);
+	SetFontThickness(9);
+	DrawBoxAA(UP_x1 + 45, UP_y1 + 50, UP_x1 + 65, UP_y1 + 60, Bk, TRUE);
+	DrawFormatString(UP_x1 + 50, UP_y1 + 51, Wh, "HP");
+
+	ScreenFlip();// 裏画面データを表画面へ反映
+	SetDrawScreen(DX_SCREEN_FRONT); // 描画先を裏画面に設定
+
+}
+
+void MyTextHpgauge(MyPokemon* mypokemon) {
+
+	ScreenFlip();// 裏画面データを表画面へ反映
+	SetDrawScreen(DX_SCREEN_BACK); // 描画先を裏画面に設定
+
+	SetFontSize(20);
+	SetFontThickness(9);
+	DrawBoxAA(UP_x2 - 140, UP_y2 - 115, UP_x2, UP_y2 - 65, Wh, TRUE);
+	DrawBoxAA(UP_x2 - 140, UP_y2 - 115, UP_x2, UP_y2 - 65, Bk, FALSE);
+	DrawTriangle(UP_x2 - 140, UP_y2 - 85, UP_x2 - 140, UP_y2 - 75, UP_x2 - 155, UP_y2 - 80, Bk, TRUE);
+	DrawFormatString(UP_x2 - 135, UP_y2 - 115, Bk, "%s", mypokemon[MyPokemonNumber].pokemon.name);
+
+	//HPバー
+	int  a, b;
+	float HPzahyo;
+	a = mypokemon[MyPokemonNumber].pokemon.HP;
+	b = mypokemon[MyPokemonNumber].pokemon.MAXHP;
+
+	HPzahyo = ((float)a / (float)b) * 70.0;
+
+	if (HPzahyo >= (70 * 0.5)) {
+		DrawBoxAA(UP_x2 - 75, UP_y2 - 90, UP_x2 - 75 + HPzahyo, UP_y2 - 80, Gr, TRUE);
+	}
+	else if (HPzahyo >= (70 * 0.2)) {
+		DrawBoxAA(UP_x2 - 75, UP_y2 - 90, UP_x2 - 75 + HPzahyo, UP_y2 - 80, Yl, TRUE);
+	}
+	else {
+		DrawBoxAA(UP_x2 - 75, UP_y2 - 90, UP_x2 - 75 + HPzahyo, UP_y2 - 80, Rd, TRUE);
+	}
+
+	DrawBoxAA(UP_x2 - 75, UP_y2 - 90, UP_x2 -5, UP_y2 - 80, Bk, FALSE);
+	SetFontSize(7);
+	SetFontThickness(9);
+	DrawBoxAA(UP_x2 - 95, UP_y2 - 90, UP_x2 - 75, UP_y2 - 80, Bk, TRUE);
+	DrawFormatString(UP_x2 - 90, UP_y2 - 89, Wh, "HP");
+	SetFontSize(14);
+	DrawFormatString(UP_x2 - 70, UP_y2 - 80, Bk, "%4d / %4d", mypokemon[MyPokemonNumber].pokemon.HP, mypokemon[MyPokemonNumber].pokemon.MAXHP);
+
+	ScreenFlip();// 裏画面データを表画面へ反映
+	SetDrawScreen(DX_SCREEN_FRONT); // 描画先を裏画面に設定
 }
