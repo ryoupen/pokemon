@@ -120,7 +120,8 @@ void Myturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon);
 void Enemyturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon);
 void Abutton();
 int CalcCenterX(int x1, int x2, const char* str);
-void SelectMove(EnemyPokemon* enemypokemon, MyPokemon* mypokemon, Move* MyMove);
+void MySelectMove(EnemyPokemon* enemypokemon, MyPokemon* mypokemon, Move* MyMove);
+void EnemySelectMove(MyPokemon* enemypokemon, EnemyPokemon* mypokemon, Move* MyMove);
 
 //上記共通のため変更しない------------------------------------------------------------------------------------------------------------
 
@@ -157,8 +158,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Pokemon pokemon[PokeNum];
 	PokemonCreate(pokemon,Move_Machine);
 
-	MyPokemon mypokemon[MAXPokemon] = { pokemon[1],pokemon[2],pokemon[4],pokemon[5],pokemon[6],pokemon[9] };
-	EnemyPokemon enemypokemon[MAXPokemon] = { pokemon[0],pokemon[3],pokemon[9],pokemon[9],pokemon[9],pokemon[9] };
+	MyPokemon mypokemon[MAXPokemon] = { pokemon[1],pokemon[0],pokemon[4],pokemon[5],pokemon[6],pokemon[9] };
+	EnemyPokemon enemypokemon[MAXPokemon] = { pokemon[2],pokemon[3],pokemon[9],pokemon[9],pokemon[9],pokemon[9] };
 
 	//トレーナーの名前生成
 	Trainer TrainerName[2] = { "野獣先輩","せいじ" };
@@ -559,21 +560,25 @@ int Select1(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 					}
 
 					cnt = 1;
+					break;
 				}
 
 				//もし、その座標がBボタンの位置だったら
 				else if (MouseX >= (575 - x) && MouseX <= (575 + x) && MouseY >= (513 - y) && MouseY <= (513 + y)) {
 					cnt = 1;
+					break;
 				}
 
 				//もし、その座標がXボタンの位置だったら
 				else if (MouseX >= (575 - x) && MouseX <= (575 + x) && MouseY >= (435 - y) && MouseY <= (435 + y)) {
 					cnt = 1;
+					break;
 				}
 
 				//もし、その座標がYボタンの位置だったら
 				else if (MouseX >= (536 - x) && MouseX <= (536 + x) && MouseY >= (474 - y) && MouseY <= (474 + y)) {
 					cnt = 1;
+					break;
 				}
 
 			}
@@ -666,7 +671,8 @@ int Select2(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 		//もし、マウスのボタンが押されているかつ、押されているボタンが左だったら
 		if (LogType == MOUSE_INPUT_LOG_DOWN && (MouseInput & MOUSE_INPUT_LEFT) != 0) {
 
-			double deg = 0, len = 18, rad = 0, x = 0, y = 0, cnt = 0;
+			double deg = 0, len = 18, rad = 0, x = 0, y = 0;
+			int cnt = 0;
 
 			for (int deg = 0; deg <= 90; deg++) {
 
@@ -677,51 +683,55 @@ int Select2(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 				if (MouseX >= (614 - x) && MouseX <= (614 + x) && MouseY >= (474 - y) && MouseY <= (474 + y)) {
 
 					flg = 1;
+					cnt = 1;
 
 					if (cursor == 1) {
 
 						MoveNumber = 1;
 						TurnCheck(mypokemon, enemypokemon);
+						break;
 					}
 
 					else if (cursor == 2) {
 
 						MoveNumber = 2;
 						TurnCheck(mypokemon, enemypokemon);
-
+						break;
 					}
 
 					else if (cursor == 3) {
 
 						MoveNumber = 3;
 						TurnCheck(mypokemon, enemypokemon);
-
+						break;
 					}
 
 					else if (cursor == 4) {
 						
 						MoveNumber = 4;
 						TurnCheck(mypokemon, enemypokemon);
-
+						break;
 					}
 
-					cnt = 1;
 				}
 
 				//もし、その座標がBボタンの位置だったら
 				else if (MouseX >= (575 - x) && MouseX <= (575 + x) && MouseY >= (513 - y) && MouseY <= (513 + y)) {
 					flg = 1;
 					cnt = 1;
+					break;
 				}
 
 				//もし、その座標がXボタンの位置だったら
 				else if (MouseX >= (575 - x) && MouseX <= (575 + x) && MouseY >= (435 - y) && MouseY <= (435 + y)) {
 					cnt = 1;
+					break;
 				}
 
 				//もし、その座標がYボタンの位置だったら
 				else if (MouseX >= (536 - x) && MouseX <= (536 + x) && MouseY >= (474 - y) && MouseY <= (474 + y)) {
 					cnt = 1;
+					break;
 				}
 
 			}
@@ -792,7 +802,7 @@ int Select2(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 			}
 
 			//もし、その座標が技3だったら
-			else if (MouseX >= 165 && MouseX <= 520 && MouseY >= 520 && MouseY <= 595) {
+			else if (MouseX >= 165 && MouseX <= 320 && MouseY >= 520 && MouseY <= 595) {
 				MoveNumber = 3;
 				TurnCheck(mypokemon, enemypokemon);
 				cnt = 1;
@@ -899,7 +909,8 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 		//もし、マウスのボタンが押されているかつ、押されているボタンが左だったら
 		if (LogType == MOUSE_INPUT_LOG_DOWN && (MouseInput & MOUSE_INPUT_LEFT) != 0) {
 
-			double deg = 0, len = 18, rad = 0, x = 0, y = 0, cnt = 0;
+			double deg = 0, len = 18, rad = 0, x = 0, y = 0;
+			int cnt = 0;
 
 			for (int deg = 0; deg <= 90; deg++) {
 
@@ -958,22 +969,26 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 					}
 
 					cnt = 1;
+					break;
 				}
 
 				//もし、その座標がBボタンの位置だったら
 				else if (MouseX >= (575 - x) && MouseX <= (575 + x) && MouseY >= (513 - y) && MouseY <= (513 + y)) {
 					flg = 1;
 					cnt = 1;
+					break;
 				}
 
 				//もし、その座標がXボタンの位置だったら
 				else if (MouseX >= (575 - x) && MouseX <= (575 + x) && MouseY >= (435 - y) && MouseY <= (435 + y)) {
 					cnt = 1;
+					break;
 				}
 
 				//もし、その座標がYボタンの位置だったら
 				else if (MouseX >= (536 - x) && MouseX <= (536 + x) && MouseY >= (474 - y) && MouseY <= (474 + y)) {
 					cnt = 1;
+					break;
 				}
 			}
 
@@ -1249,40 +1264,65 @@ void PokemonChange(int MyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokemon
 void Myturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
 
 	SetFontSize(22);
-	DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-
+	
 	if(MoveNumber == 1){
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV1.name); 
-		SelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV1);
+		MySelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV1);
 	}
 
 	else if (MoveNumber == 2) {
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV2.name);
-		SelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV2);
+		MySelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV2);
 	}
 
 	else if (MoveNumber == 3) {
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV3.name);
-		SelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV3);
+		MySelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV3);
 	}
 
 	else if (MoveNumber == 4) {
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV4.name);
-		SelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV4);
+		MySelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV4);
 	}
 
 }
 
 void Enemyturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
+
 	srand((unsigned)time(NULL));
-	DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-	DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", enemypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV1.name);
-	mypokemon[MyPokemonNumber].pokemon.HP -= (50 * ((rand() % 1400 * 0.001) + 0.3));
-	Abutton();
+	int EnemyMoveNumber;
+	EnemyMoveNumber = rand() % 4 + 1;
+
+	SetFontSize(22);
+
+	if (EnemyMoveNumber == 1) {
+		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", enemypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV1.name);
+		EnemySelectMove(mypokemon, enemypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV1);
+	}
+
+	else if (EnemyMoveNumber == 2) {
+		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", enemypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV2.name);
+		EnemySelectMove(mypokemon, enemypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV2);
+	}
+
+	else if (EnemyMoveNumber == 3) {
+		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", enemypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV3.name);
+		EnemySelectMove(mypokemon, enemypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV3);
+	}
+
+	else if (EnemyMoveNumber == 4) {
+		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", enemypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV4.name);
+		EnemySelectMove(mypokemon, enemypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV4);
+	}
+
 }
 
 void Abutton() {
@@ -1331,7 +1371,7 @@ int CalcCenterX(int x1,int x2,const char *str)
     return (int)((x1+((x2-x1)/2))-(StrWidth/2));
 }
 
-void SelectMove(EnemyPokemon* enemypokemon,MyPokemon* mypokemon,Move* MyMove) {
+void MySelectMove(EnemyPokemon* enemypokemon,MyPokemon* mypokemon,Move* MyMove) {
 
 	int AtkNum = 0;
 	float ElementEffect = 0;
@@ -1365,11 +1405,6 @@ void SelectMove(EnemyPokemon* enemypokemon,MyPokemon* mypokemon,Move* MyMove) {
 			AtkNum = ((mypokemon[MyPokemonNumber].pokemon.ATK * MyMove->ATKscale - enemypokemon[EnemyPokemonNumber].pokemon.DEF) * ElementEffect * (rand() % 700 * 0.001) + 0.7);
 		}
 
-
-		//技のカウントを減らす
-		MyMove->MoveCount--;
-
-
 		//HPを減らす
 		int HPCount = AtkNum;
 
@@ -1382,11 +1417,76 @@ void SelectMove(EnemyPokemon* enemypokemon,MyPokemon* mypokemon,Move* MyMove) {
 	}
 
 	else {
+
 		//当たらなかった。
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sには\n当たらなかった！", enemypokemon[EnemyPokemonNumber].pokemon.name);
-		Abutton();
 	}
+
+	//技のカウントを減らす
+	MyMove->MoveCount--;
+
+	Sleep(1000);
+
+}
+
+void EnemySelectMove(MyPokemon* enemypokemon, EnemyPokemon* mypokemon, Move* MyMove) {
+
+	int AtkNum = 0;
+	float ElementEffect = 0;
+
+	if ((MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
+		(MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
+		(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
+		(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5) ||
+		(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4)) {
+		ElementEffect = 0.7;
+	}
+
+	else if ((MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
+		(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
+		(MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
+		(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4) ||
+		(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5)) {
+		ElementEffect = 1.3;
+	}
+
+	else {
+		ElementEffect = 1.0;
+	}
+
+	srand((unsigned)time(NULL));
+
+	//命中率
+	if (MyMove->Hitrate - ((rand() % 100) + 1) >= 0) {
+		switch (MyMove->other) {
+		case 0:
+			AtkNum = ((mypokemon[MyPokemonNumber].pokemon.ATK * MyMove->ATKscale - enemypokemon[EnemyPokemonNumber].pokemon.DEF) * ElementEffect * (rand() % 700 * 0.001) + 0.7);
+		}
+
+		//HPを減らす
+		int HPCount = AtkNum;
+
+		while (HPCount >= 1) {
+			enemypokemon[EnemyPokemonNumber].pokemon.HP = enemypokemon[EnemyPokemonNumber].pokemon.HP - 1;
+			MyTextHpgauge(enemypokemon);
+			HPCount--;
+			Sleep(10);
+		}
+	}
+
+	else {
+
+		//当たらなかった。
+		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sには\n当たらなかった！", enemypokemon[EnemyPokemonNumber].pokemon.name);
+	}
+
+	Sleep(1000);
+
+
+	//技のカウントを減らす
+	MyMove->MoveCount--;
 }
 
 void EnemyTextHpgauge(EnemyPokemon* enemypokemon) {
@@ -1400,6 +1500,7 @@ void EnemyTextHpgauge(EnemyPokemon* enemypokemon) {
 	DrawBoxAA(UP_x1, UP_y1 + 25, UP_x1 + 140, UP_y1 + 65, Bk, FALSE);
 	DrawTriangle(UP_x1 + 140, UP_y1 + 45, UP_x1 + 140, UP_y1 + 55, UP_x1 + 155, UP_y1 + 50, Bk, TRUE);
 	DrawFormatString(UP_x1+5, UP_y1 + 25, Bk, "%s", enemypokemon[EnemyPokemonNumber].pokemon.name);
+
 	//HPバー
 	int  a, b;
 	float HPzahyo;
@@ -1426,7 +1527,6 @@ void EnemyTextHpgauge(EnemyPokemon* enemypokemon) {
 
 	ScreenFlip();// 裏画面データを表画面へ反映
 	SetDrawScreen(DX_SCREEN_FRONT); // 描画先を裏画面に設定
-
 }
 
 void MyTextHpgauge(MyPokemon* mypokemon) {
@@ -1464,9 +1564,12 @@ void MyTextHpgauge(MyPokemon* mypokemon) {
 	SetFontThickness(9);
 	DrawBoxAA(UP_x2 - 95, UP_y2 - 90, UP_x2 - 75, UP_y2 - 80, Bk, TRUE);
 	DrawFormatString(UP_x2 - 90, UP_y2 - 89, Wh, "HP");
+
+	//HPの残り表示
 	SetFontSize(14);
 	DrawFormatString(UP_x2 - 70, UP_y2 - 80, Bk, "%4d / %4d", mypokemon[MyPokemonNumber].pokemon.HP, mypokemon[MyPokemonNumber].pokemon.MAXHP);
 
 	ScreenFlip();// 裏画面データを表画面へ反映
 	SetDrawScreen(DX_SCREEN_FRONT); // 描画先を裏画面に設定
+
 }
