@@ -4,7 +4,6 @@
 #include <time.h>
 
 //色指定(共通）-----------------------------------------------------------------------------------------------------------------------
-unsigned int Bk, Bl, Wh, Gl, Gr, Dr, Lg, Dg, Ld, Lr, Lb, Db, LLb, Pi, Ly, Yl, Rd;
 #define Wh GetColor(255, 255, 255) //白
 #define Bk GetColor(0, 0, 0)       //黒9
 #define Gl GetColor(102, 102, 102) //灰色
@@ -22,7 +21,12 @@ unsigned int Bk, Bl, Wh, Gl, Gr, Dr, Lg, Dg, Ld, Lr, Lb, Db, LLb, Pi, Ly, Yl, Rd
 #define Ly GetColor(255, 255, 200) //明るい黄色
 #define Yl GetColor(255, 255, 0)   //黄色	
 #define Rd GetColor(255, 0, 0)	   //赤色
-
+#define Normal GetColor(192, 192, 192) //ノーマル
+#define Fire GetColor(255, 119, 51) //火
+#define Water GetColor(0, 170, 255) //水
+#define Grass GetColor(41, 204, 41) //草
+#define Light GetColor(255, 255, 0) //光
+#define Dark GetColor(85, 61, 204) //闇
 
 //画面大きさ（横×縦）330×250 pixel　（共通）----------------------------------------------------------------------------------------
 //上画面
@@ -122,6 +126,7 @@ void Abutton();
 int CalcCenterX(int x1, int x2, const char* str);
 void MySelectMove(EnemyPokemon* enemypokemon, MyPokemon* mypokemon, Move* MyMove);
 void EnemySelectMove(MyPokemon* enemypokemon, EnemyPokemon* mypokemon, Move* MyMove);
+unsigned int  ColorChange(int ColorNumber);
 
 //上記共通のため変更しない------------------------------------------------------------------------------------------------------------
 
@@ -293,7 +298,7 @@ void ScreenReset() {
 }
 
 void MoveCreate(Move* Move_Machine) {
-	Move_Machine[0] = {"-",};
+	Move_Machine[0] = {"-",ノーマル,0,0,0,0,0,0 };
 	Move_Machine[1] = {"へんしん",ノーマル,1,1,100,0,1,1};	//技を４つ入れ替え
 	Move_Machine[2] = {"ちょうはつ",ノーマル,15,15,80,0,1,2};	//相手の攻撃1.2倍、防御下がる1.2倍
 	Move_Machine[3] = {"キック",ノーマル,20,20,90,1.1,1,0};
@@ -320,14 +325,14 @@ void MoveCreate(Move* Move_Machine) {
 }
 
 void PokemonCreate(Pokemon* pokemon, Move* Move_Machine) {
-	pokemon[0] = { "メタゴン",ノーマル,500,500,100,75,500,Move_Machine[1],Move_Machine[0],Move_Machine[0],Move_Machine[0] };
-	pokemon[1] = { "黄金の船",光,800,800,150,50,1000,Move_Machine[2],Move_Machine[3],Move_Machine[4],Move_Machine[5] };
-	pokemon[2] = { "かぼやん",草,800,800,70,130,350,Move_Machine[6],Move_Machine[7],Move_Machine[8],Move_Machine[9] };
+	pokemon[0] = { "メタゴン",ノーマル,500,500,200,30,500,Move_Machine[1],Move_Machine[0],Move_Machine[0],Move_Machine[0] };
+	pokemon[1] = { "黄金の船",光,800,800,180,20,1000,Move_Machine[2],Move_Machine[3],Move_Machine[4],Move_Machine[5] };
+	pokemon[2] = { "かぼやん",草,800,800,95,90,350,Move_Machine[6],Move_Machine[7],Move_Machine[8],Move_Machine[9] };
 	pokemon[3] = { "ビリオン", 光,1,1,1,1,1,Move_Machine[10],Move_Machine[11],Move_Machine[12],Move_Machine[13] };
-	pokemon[4] = { "オラポン", 火,600,600,111,70,600,Move_Machine[3],Move_Machine[14],Move_Machine[15],Move_Machine[16] };
-	pokemon[5] = { "クロネコ", 闇,440,440,155,90,770,Move_Machine[17],Move_Machine[2],Move_Machine[15],Move_Machine[18] };
-	pokemon[6] = { "せいじ",水,1000,1000,50,1,900,Move_Machine[19],Move_Machine[20] ,Move_Machine[21] ,Move_Machine[22] };
-	pokemon[7] = { "雪の妖精",光,750,750,99,80,600, Move_Machine[23],Move_Machine[0],Move_Machine[0],Move_Machine[0] };
+	pokemon[4] = { "オラポン", 火,600,600,135,30,600,Move_Machine[3],Move_Machine[14],Move_Machine[15],Move_Machine[16] };
+	pokemon[5] = { "クロネコ", 闇,440,440,170,50,770,Move_Machine[17],Move_Machine[2],Move_Machine[15],Move_Machine[18] };
+	pokemon[6] = { "せいじ",水,1000,1000,1,1,900,Move_Machine[19],Move_Machine[20] ,Move_Machine[21] ,Move_Machine[22] };
+	pokemon[7] = { "雪の妖精",光,750,750,140,40,600, Move_Machine[23],Move_Machine[0],Move_Machine[0],Move_Machine[0] };
 	pokemon[9] = { "-" };
 }
 
@@ -403,49 +408,55 @@ void Screen2(MyPokemon* mypokemon) {
 	int x,x1, x2;
 	char* str;
 
+	unsigned int Color;
+
 	//・技左上座標
 	x1 = 170;
 	x2 = 315;
 	str = mypokemon[MyPokemonNumber].pokemon.MV1.name;
 	x = CalcCenterX(x1, x2, str);
-	DrawBoxAA(165, 435, 320, 510, Lr, TRUE);
+	Color = ColorChange(mypokemon[MyPokemonNumber].pokemon.MV1.Type);
+	DrawBoxAA(165, 435, 320, 510, Color, TRUE);
 	DrawBoxAA(165, 435, 320, 510, Bk, FALSE);
 	DrawBoxAA(170, 440, 315, 505, Ld, TRUE);
 	DrawFormatString(x, 445, Bk, "%s", mypokemon[MyPokemonNumber].pokemon.MV1.name);
-	DrawFormatString(220, 475, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV1.MoveCount,mypokemon[MyPokemonNumber].pokemon.MV1.MAXMoveCount);
+	DrawFormatString(205, 475, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV1.MoveCount,mypokemon[MyPokemonNumber].pokemon.MV1.MAXMoveCount);
 	
 	//・技右上座標
 	x1 = 335;
 	x2 = 480;
 	str = mypokemon[MyPokemonNumber].pokemon.MV2.name;
 	x = CalcCenterX(x1, x2, str);
-	DrawBoxAA(330, 435, 485, 510, Ld, TRUE);
+	Color = ColorChange(mypokemon[MyPokemonNumber].pokemon.MV2.Type);
+	DrawBoxAA(330, 435, 485, 510, Color, TRUE);
 	DrawBoxAA(330, 435, 485, 510, Bk, FALSE);
 	DrawBoxAA(335, 440, 480, 505, Ld, TRUE);
 	DrawFormatString(x, 445, Bk, "%s", mypokemon[MyPokemonNumber].pokemon.MV2.name);
-	DrawFormatString(385, 475, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV2.MoveCount, mypokemon[MyPokemonNumber].pokemon.MV2.MAXMoveCount);
+	DrawFormatString(370, 475, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV2.MoveCount, mypokemon[MyPokemonNumber].pokemon.MV2.MAXMoveCount);
 	
 	//・技左下座標
 	x1 = 170;
 	x2 = 315;
 	str = mypokemon[MyPokemonNumber].pokemon.MV3.name;
 	x = CalcCenterX(x1, x2, str);
-	DrawBoxAA(165, 520, 320, 595, Ld, TRUE);
+	Color = ColorChange(mypokemon[MyPokemonNumber].pokemon.MV3.Type);
+	DrawBoxAA(165, 520, 320, 595, Color, TRUE);
 	DrawBoxAA(165, 520, 320, 595, Bk, FALSE);
 	DrawBoxAA(170, 525, 315, 590, Ld, TRUE);
 	DrawFormatString(x, 530, Bk, "%s", mypokemon[MyPokemonNumber].pokemon.MV3.name);
-	DrawFormatString(220, 560, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV3.MoveCount, mypokemon[MyPokemonNumber].pokemon.MV3.MAXMoveCount);
+	DrawFormatString(205, 560, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV3.MoveCount, mypokemon[MyPokemonNumber].pokemon.MV3.MAXMoveCount);
 	
 	//・技右下座標
 	x1 = 335;
 	x2 = 480;
 	str = mypokemon[MyPokemonNumber].pokemon.MV4.name;
 	x = CalcCenterX(x1, x2, str);
-	DrawBoxAA(330, 520, 485, 595, Ld, TRUE);
+	Color = ColorChange(mypokemon[MyPokemonNumber].pokemon.MV4.Type);
+	DrawBoxAA(330, 520, 485, 595, Color, TRUE);
 	DrawBoxAA(330, 520, 485, 595, Bk, FALSE);
 	DrawBoxAA(335, 525, 480, 590, Ld, TRUE);
 	DrawFormatString(x, 530, Bk, "%s", mypokemon[MyPokemonNumber].pokemon.MV4.name);
-	DrawFormatString(385, 560, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV4.MoveCount, mypokemon[MyPokemonNumber].pokemon.MV4.MAXMoveCount);
+	DrawFormatString(370, 560, Bk, "PP %2d/%2d", mypokemon[MyPokemonNumber].pokemon.MV4.MoveCount, mypokemon[MyPokemonNumber].pokemon.MV4.MAXMoveCount);
 	
 	//・もどる座標
 	DrawBoxAA(160, 600, 490, 650, Lb, TRUE);
@@ -682,35 +693,72 @@ int Select2(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 				//もし、その座標がAボタンの位置だったら
 				if (MouseX >= (614 - x) && MouseX <= (614 + x) && MouseY >= (474 - y) && MouseY <= (474 + y)) {
 
-					flg = 1;
-					cnt = 1;
-
 					if (cursor == 1) {
-
-						MoveNumber = 1;
-						TurnCheck(mypokemon, enemypokemon);
-						break;
+						if (mypokemon[MyPokemonNumber].pokemon.MV1.MoveCount != 0) {
+							flg = 1;
+							cnt = 1;
+							MoveNumber = 1;
+							TurnCheck(mypokemon, enemypokemon);
+							break;
+						}
+						else {
+							DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+							DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sは　ポイントぎれで\n%sが　くりだせない！",mypokemon[MyPokemonNumber].pokemon.name ,mypokemon[MyPokemonNumber].pokemon.MV1.name);
+							Abutton();
+							DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+							DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sはどうする？", mypokemon[MyPokemonNumber].pokemon.name);
+						}
 					}
 
 					else if (cursor == 2) {
-
-						MoveNumber = 2;
-						TurnCheck(mypokemon, enemypokemon);
-						break;
+						if (mypokemon[MyPokemonNumber].pokemon.MV2.MoveCount != 0) {
+							flg = 1;
+							cnt = 1;
+							MoveNumber = 2;
+							TurnCheck(mypokemon, enemypokemon);
+							break;
+						}
+						else {
+							DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+							DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sは　ポイントぎれで\n%sが　くりだせない！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV2.name);
+							Abutton();
+							DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+							DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sはどうする？", mypokemon[MyPokemonNumber].pokemon.name);
+						}
 					}
 
 					else if (cursor == 3) {
-
-						MoveNumber = 3;
-						TurnCheck(mypokemon, enemypokemon);
-						break;
+						if (mypokemon[MyPokemonNumber].pokemon.MV3.MoveCount != 0) {
+							flg = 1;
+							cnt = 1;
+							MoveNumber = 3;
+							TurnCheck(mypokemon, enemypokemon);
+							break;
+						}
+						else {
+							DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+							DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sは　ポイントぎれで\n%sが　くりだせない！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV3.name);
+							Abutton();
+							DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+							DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sはどうする？", mypokemon[MyPokemonNumber].pokemon.name);
+						}
 					}
 
 					else if (cursor == 4) {
-						
-						MoveNumber = 4;
-						TurnCheck(mypokemon, enemypokemon);
-						break;
+						if (mypokemon[MyPokemonNumber].pokemon.MV4.MoveCount != 0) {
+							flg = 1;
+							cnt = 1;
+							MoveNumber = 4;
+							TurnCheck(mypokemon, enemypokemon);
+							break;
+						}
+						else {
+							DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+							DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sは　ポイントぎれで\n%sが　くりだせない！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV4.name);
+							Abutton();
+							DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+							DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sはどうする？", mypokemon[MyPokemonNumber].pokemon.name);
+						}
 					}
 
 				}
@@ -787,34 +835,69 @@ int Select2(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 
 			//もし、その座標が技1だったら
 			else if (MouseX >= 165 && MouseX <= 320 && MouseY >= 435 && MouseY <= 510) {
-				MoveNumber = 1;
-				TurnCheck(mypokemon, enemypokemon);
-				cnt = 1;
-				flg = 1;
+				if (mypokemon[MyPokemonNumber].pokemon.MV1.MoveCount != 0) {
+					MoveNumber = 1;
+					TurnCheck(mypokemon, enemypokemon);
+					cnt = 1;
+					flg = 1;
+				}
+				else {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sは　ポイントぎれで\n%sが　くりだせない！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV1.name);
+					Abutton();
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sはどうする？", mypokemon[MyPokemonNumber].pokemon.name);
+				}
 			}
 
 			//もし、その座標が技2だったら
 			else if (MouseX >= 330 && MouseX <= 485 && MouseY >= 435 && MouseY <= 510) {
-				MoveNumber = 2;
-				TurnCheck(mypokemon, enemypokemon);
-				cnt = 1;
-				flg = 1;
+				if (mypokemon[MyPokemonNumber].pokemon.MV2.MoveCount != 0) {
+					MoveNumber = 2;
+					TurnCheck(mypokemon, enemypokemon);
+					cnt = 1;
+					flg = 1;
+				}
+				else {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sは　ポイントぎれで\n%sが　くりだせない！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV2.name);
+					Abutton();
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sはどうする？", mypokemon[MyPokemonNumber].pokemon.name);
+				}
+
 			}
 
 			//もし、その座標が技3だったら
 			else if (MouseX >= 165 && MouseX <= 320 && MouseY >= 520 && MouseY <= 595) {
-				MoveNumber = 3;
-				TurnCheck(mypokemon, enemypokemon);
-				cnt = 1;
-				flg = 1;
+				if (mypokemon[MyPokemonNumber].pokemon.MV3.MoveCount != 0) {
+					MoveNumber = 3;
+					TurnCheck(mypokemon, enemypokemon);
+					cnt = 1;	
+					flg = 1;
+				}
+				else {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sは　ポイントぎれで\n%sが　くりだせない！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV3.name);
+				
+				}
 			}
 
 			//もし、その座標が技4だったら
 			else if (MouseX >= 330 && MouseX <= 485 && MouseY >= 520 && MouseY <= 595) {
-				MoveNumber = 4;
-				TurnCheck(mypokemon, enemypokemon);
-				cnt = 1;
-				flg = 1;
+				if (mypokemon[MyPokemonNumber].pokemon.MV4.MoveCount != 0) {
+					MoveNumber = 4;
+					TurnCheck(mypokemon, enemypokemon);
+					cnt = 1;
+					flg = 1;
+				}
+				else {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sは　ポイントぎれで\n%sが　くりだせない！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV4.name);
+					Abutton();
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sはどうする？", mypokemon[MyPokemonNumber].pokemon.name);
+				}
 			}
 
 			//もし、その座標がもどるだったら
@@ -1268,24 +1351,28 @@ void Myturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
 	if(MoveNumber == 1){
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV1.name); 
+		Abutton();
 		MySelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV1);
 	}
 
 	else if (MoveNumber == 2) {
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV2.name);
+		Abutton();
 		MySelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV2);
 	}
 
 	else if (MoveNumber == 3) {
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV3.name);
+		Abutton(); 
 		MySelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV3);
 	}
 
 	else if (MoveNumber == 4) {
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, mypokemon[MyPokemonNumber].pokemon.MV4.name);
+		Abutton(); 
 		MySelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV4);
 	}
 
@@ -1302,24 +1389,28 @@ void Enemyturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
 	if (EnemyMoveNumber == 1) {
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", enemypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV1.name);
+		Abutton(); 
 		EnemySelectMove(mypokemon, enemypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV1);
 	}
 
 	else if (EnemyMoveNumber == 2) {
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", enemypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV2.name);
+		Abutton(); 
 		EnemySelectMove(mypokemon, enemypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV2);
 	}
 
 	else if (EnemyMoveNumber == 3) {
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", enemypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV3.name);
+		Abutton();
 		EnemySelectMove(mypokemon, enemypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV3);
 	}
 
 	else if (EnemyMoveNumber == 4) {
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", enemypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV4.name);
+		Abutton(); 
 		EnemySelectMove(mypokemon, enemypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV4);
 	}
 
@@ -1361,6 +1452,13 @@ void Abutton() {
 			break;
 		}
 	}
+
+	//初期化
+	MouseX = 0;
+	MouseY = 0;
+	MouseInput = 0;
+	LogType = 0;
+
 }
 
 int CalcCenterX(int x1,int x2,const char *str)
@@ -1376,33 +1474,48 @@ void MySelectMove(EnemyPokemon* enemypokemon,MyPokemon* mypokemon,Move* MyMove) 
 	int AtkNum = 0;
 	float ElementEffect = 0;
 
-	if ((MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
-		(MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
-		(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
-		(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5) ||
-		(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4)) {
-		ElementEffect = 0.7;
-	}
-
-	else if ((MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
-		(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
-		(MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
-		(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4) ||
-		(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5)) {
-		ElementEffect = 1.3;
-	}
-
-	else {
-		ElementEffect = 1.0;
-	}
-
 	srand((unsigned)time(NULL));
 
 	//命中率
 	if (MyMove->Hitrate - ((rand() % 100) + 1) >= 0) {
+
+		if ((MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
+			(MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
+			(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
+			(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5) ||
+			(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4)) {
+			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　いまひとつのようだ...");
+			ElementEffect = 0.7;
+		}
+
+		else if ((MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
+			(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
+			(MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
+			(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4) ||
+			(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5)) {
+			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　ばつぐんだ！");
+			ElementEffect = 1.3;
+		}
+
+		else {
+			ElementEffect = 1.0;
+		}
+		
+		//9%の確率できゅうしょに当たる
+		if ((rand() % 100) >= 90) {
+			Sleep(500);
+			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "きゅうしょにあたった！");
+			ElementEffect += 1.5;
+		}
+
+		//ポケモンの技
 		switch (MyMove->other) {
-		case 0:
-			AtkNum = ((mypokemon[MyPokemonNumber].pokemon.ATK * MyMove->ATKscale - enemypokemon[EnemyPokemonNumber].pokemon.DEF) * ElementEffect * (rand() % 700 * 0.001) + 0.7);
+			//通常攻撃の時
+			case 0:
+				AtkNum = ((mypokemon[MyPokemonNumber].pokemon.ATK * MyMove->ATKscale - enemypokemon[EnemyPokemonNumber].pokemon.DEF) * ElementEffect * ((rand() % 700 * 0.001) + 0.7));
 		}
 
 		//HPを減らす
@@ -1412,7 +1525,6 @@ void MySelectMove(EnemyPokemon* enemypokemon,MyPokemon* mypokemon,Move* MyMove) 
 			enemypokemon[EnemyPokemonNumber].pokemon.HP = enemypokemon[EnemyPokemonNumber].pokemon.HP - 1;
 			EnemyTextHpgauge(enemypokemon);
 			HPCount--;
-			Sleep(10);
 		}
 	}
 
@@ -1423,10 +1535,12 @@ void MySelectMove(EnemyPokemon* enemypokemon,MyPokemon* mypokemon,Move* MyMove) 
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sには\n当たらなかった！", enemypokemon[EnemyPokemonNumber].pokemon.name);
 	}
 
+	Abutton();
+
 	//技のカウントを減らす
 	MyMove->MoveCount--;
 
-	Sleep(1000);
+	Sleep(500);
 
 }
 
@@ -1435,43 +1549,57 @@ void EnemySelectMove(MyPokemon* enemypokemon, EnemyPokemon* mypokemon, Move* MyM
 	int AtkNum = 0;
 	float ElementEffect = 0;
 
-	if ((MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
-		(MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
-		(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
-		(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5) ||
-		(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4)) {
-		ElementEffect = 0.7;
-	}
-
-	else if ((MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
-		(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
-		(MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
-		(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4) ||
-		(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5)) {
-		ElementEffect = 1.3;
-	}
-
-	else {
-		ElementEffect = 1.0;
-	}
-
 	srand((unsigned)time(NULL));
 
 	//命中率
 	if (MyMove->Hitrate - ((rand() % 100) + 1) >= 0) {
+
+		if ((MyMove->Type == 1 && enemypokemon[MyPokemonNumber].pokemon.ELE == 2) ||
+			(MyMove->Type == 2 && enemypokemon[MyPokemonNumber].pokemon.ELE == 3) ||
+			(MyMove->Type == 3 && enemypokemon[MyPokemonNumber].pokemon.ELE == 1) ||
+			(MyMove->Type == 4 && enemypokemon[MyPokemonNumber].pokemon.ELE == 5) ||
+			(MyMove->Type == 5 && enemypokemon[MyPokemonNumber].pokemon.ELE == 4)) {
+			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　いまひとつのようだ...");
+			ElementEffect = 0.7;
+		}
+
+		else if ((MyMove->Type == 2 && enemypokemon[MyPokemonNumber].pokemon.ELE == 1) ||
+			(MyMove->Type == 3 && enemypokemon[MyPokemonNumber].pokemon.ELE == 2) ||
+			(MyMove->Type == 1 && enemypokemon[MyPokemonNumber].pokemon.ELE == 3) ||
+			(MyMove->Type == 5 && enemypokemon[MyPokemonNumber].pokemon.ELE == 4) ||
+			(MyMove->Type == 4 && enemypokemon[MyPokemonNumber].pokemon.ELE == 5)) {
+			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　ばつぐんだ！");
+			ElementEffect = 1.3;
+		}
+
+		else {
+			ElementEffect = 1.0;
+		}
+
+		//9%の確率できゅうしょに当たる
+		if ((rand() % 100) >= 90) {
+			Sleep(500);
+			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "きゅうしょにあたった！");
+			ElementEffect += 1.5;
+		}
+
+		//ポケモンの技
 		switch (MyMove->other) {
-		case 0:
-			AtkNum = ((mypokemon[MyPokemonNumber].pokemon.ATK * MyMove->ATKscale - enemypokemon[EnemyPokemonNumber].pokemon.DEF) * ElementEffect * (rand() % 700 * 0.001) + 0.7);
+			//通常攻撃の時
+			case 0:
+				AtkNum = ((mypokemon[EnemyPokemonNumber].pokemon.ATK * MyMove->ATKscale - enemypokemon[MyPokemonNumber].pokemon.DEF) * ElementEffect * ((rand() % 700 * 0.001) + 0.7));
 		}
 
 		//HPを減らす
 		int HPCount = AtkNum;
 
 		while (HPCount >= 1) {
-			enemypokemon[EnemyPokemonNumber].pokemon.HP = enemypokemon[EnemyPokemonNumber].pokemon.HP - 1;
+			enemypokemon[MyPokemonNumber].pokemon.HP = enemypokemon[MyPokemonNumber].pokemon.HP - 1;
 			MyTextHpgauge(enemypokemon);
 			HPCount--;
-			Sleep(10);
 		}
 	}
 
@@ -1479,11 +1607,12 @@ void EnemySelectMove(MyPokemon* enemypokemon, EnemyPokemon* mypokemon, Move* MyM
 
 		//当たらなかった。
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sには\n当たらなかった！", enemypokemon[EnemyPokemonNumber].pokemon.name);
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sには\n当たらなかった！", enemypokemon[MyPokemonNumber].pokemon.name);
 	}
 
-	Sleep(1000);
+	Abutton();
 
+	Sleep(500);
 
 	//技のカウントを減らす
 	MyMove->MoveCount--;
@@ -1572,4 +1701,38 @@ void MyTextHpgauge(MyPokemon* mypokemon) {
 	ScreenFlip();// 裏画面データを表画面へ反映
 	SetDrawScreen(DX_SCREEN_FRONT); // 描画先を裏画面に設定
 
+}
+
+unsigned int  ColorChange(int ColorNumber) {
+	unsigned int Color;
+
+	switch (ColorNumber) {
+		case ノーマル:
+			Color = Normal;
+			break;
+
+		case 火:
+			Color = Fire;
+			break;
+
+		case 水:
+			Color = Water;
+			break;
+
+		case 草:
+			Color = Grass;
+			break;
+
+		case 光:
+			Color = Light;
+			break;
+
+		case 闇:
+			Color = Dark;
+			break;
+
+	}
+
+
+	return Color;
 }
