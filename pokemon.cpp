@@ -163,8 +163,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Pokemon pokemon[PokeNum];
 	PokemonCreate(pokemon,Move_Machine);
 
-	MyPokemon mypokemon[MAXPokemon] = { pokemon[1],pokemon[0],pokemon[4],pokemon[5],pokemon[6],pokemon[7] };
-	EnemyPokemon enemypokemon[MAXPokemon] = { pokemon[2],pokemon[3],pokemon[9],pokemon[9],pokemon[9],pokemon[9] };
+	MyPokemon mypokemon[MAXPokemon] = { pokemon[7],pokemon[0],pokemon[4],pokemon[5],pokemon[6],pokemon[1] };
+	EnemyPokemon enemypokemon[MAXPokemon] = { pokemon[4],pokemon[3],pokemon[9],pokemon[9],pokemon[9],pokemon[9] };
 
 	//トレーナーの名前生成
 	Trainer TrainerName[2] = { "野獣先輩","せいじ" };
@@ -236,8 +236,9 @@ void ScreenReset() {
 	//上画面描画------------------------------------------------------------
 	DrawBoxAA(150, 30, 500, 300, Bk, FALSE);	//上画面外枠
 	LoadGraphScreen(UP_x1, UP_y1, "ビーチ.jpg", FALSE);
-	LoadGraphScreen(UP_x1 + 30, UP_y1 + 100, "メタゴン.png",TRUE);
-	LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, "ゴールドシップ.png", TRUE);
+	LoadGraphScreen(UP_x1 + 30, UP_y1 + 100, "ゆきぷりん.png",TRUE);
+	LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, "オラポン.png", TRUE);
+	LoadGraphScreen(400,150, "show.png", TRUE);
 	DrawBoxAA(UP_x1, UP_y1+190, UP_x2, UP_y2, Bk, TRUE);	//テキスト部
 	DrawBoxAA(UP_x1+5, UP_y1 + 190+5, UP_x2-5, UP_y2-5, Wh, TRUE);	//テキスト部
 	DrawBoxAA(UP_x1, UP_y1, UP_x2, UP_y2, Bk, FALSE);	//上画面内枠
@@ -492,12 +493,12 @@ void Screen3(MyPokemon* mypokemon) {
 	DrawBoxAA(327, 550, 490, 610, LLb, TRUE);
 
 	//・モンスターボール座標
-	LoadGraphScreen(168, 420, "ゴールドシップ_小.png", TRUE);
+	LoadGraphScreen(168, 420, "ゆきぷりん_小.png", TRUE);
 	LoadGraphScreen(168, 485, "オラポン_小.png", TRUE);
 	LoadGraphScreen(168, 550, "せいじ_小.png", TRUE);
 	LoadGraphScreen(335, 435, "メタゴン_小.png", TRUE);
 	LoadGraphScreen(335, 495, "クロネコ_小.png", TRUE);
-	LoadGraphScreen(335, 560, "ゆきぷりん_小.png", TRUE);
+	LoadGraphScreen(335, 560, "ゴールドシップ_小.png", TRUE);
 	//ポケモン名前
 	DrawString(205, 415, mypokemon[0].pokemon.name, Wh);
 	DrawString(205, 480, mypokemon[2].pokemon.name, Wh);
@@ -758,6 +759,11 @@ int Select2(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 							DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 							DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sはどうする？", mypokemon[MyPokemonNumber].pokemon.name);
 						}
+					}
+
+					else if (cursor == 5) {
+						flg = 1;
+						cnt = 1;
 					}
 
 				}
