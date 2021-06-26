@@ -153,6 +153,34 @@
   <ItemGroup>
     <ClCompile Include="pokemon.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="show.png" />
+    <Image Include="かぼやん .png" />
+    <Image Include="かぼやん_小.png" />
+    <Image Include="せいじ.png" />
+    <Image Include="せいじ_小.png" />
+    <Image Include="ゆきぷりん.png" />
+    <Image Include="ゆきぷりん_小.png" />
+    <Image Include="オラポン.png" />
+    <Image Include="オラポン_小.png" />
+    <Image Include="カーソル右上.png" />
+    <Image Include="カーソル右下.png" />
+    <Image Include="カーソル左上.png" />
+    <Image Include="カーソル左下.png" />
+    <Image Include="クロネコ.png" />
+    <Image Include="クロネコ_小.png" />
+    <Image Include="ゴールドシップ.png" />
+    <Image Include="ゴールドシップ_小.png" />
+    <Image Include="ビリオン.png" />
+    <Image Include="ビリオン_小.png" />
+    <Image Include="ビーチ.jpg" />
+    <Image Include="ボール.png" />
+    <Image Include="ボール右上.png" />
+    <Image Include="メタゴン.png" />
+    <Image Include="メタゴン_小.png" />
+    <Image Include="モンスターボール.png" />
+    <Image Include="モンスターボール右上.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

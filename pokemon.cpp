@@ -80,6 +80,8 @@ typedef struct {
 //ポケモン構造体宣言
 typedef struct {
 	char name[20];
+	char big_picture[256];
+	char sml_picture[256];
 	int ELE;
 	int MAXHP;
 	int HP;
@@ -107,7 +109,7 @@ typedef struct {
 
 
 //プロトタイプ宣言--------------------------------------------------------------------------------------------------------------------
-void ScreenReset();
+void ScreenReset(MyPokemon* mypokemon,EnemyPokemon* enemypokemon);
 void MoveCreate(Move* Move_Machine);
 void PokemonCreate(Pokemon *pokemon, Move* Move_Machine);
 void EnemyTextHpgauge(EnemyPokemon* enemypokemon);
@@ -152,9 +154,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//起動音----------------------------------------------------------------------------------
 	PlaySoundFile("DS起動音.mp3", DX_PLAYTYPE_BACK);
 
-	//画面初期化------------------------------------------------------------------------------
-	ScreenReset();
-
 	//技生成
 	Move Move_Machine[MoveNum];
 	MoveCreate(Move_Machine);
@@ -163,8 +162,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Pokemon pokemon[PokeNum];
 	PokemonCreate(pokemon,Move_Machine);
 
-	MyPokemon mypokemon[MAXPokemon] = { pokemon[7],pokemon[0],pokemon[4],pokemon[5],pokemon[6],pokemon[1] };
-	EnemyPokemon enemypokemon[MAXPokemon] = { pokemon[4],pokemon[3],pokemon[9],pokemon[9],pokemon[9],pokemon[9] };
+	MyPokemon mypokemon[MAXPokemon] = { pokemon[0],pokemon[1],pokemon[2],pokemon[3],pokemon[4],pokemon[5] };
+	EnemyPokemon enemypokemon[MAXPokemon] = { pokemon[7],pokemon[9],pokemon[9],pokemon[9],pokemon[9],pokemon[9] };
+
+	//画面初期化------------------------------------------------------------------------------
+	ScreenReset(mypokemon,enemypokemon);
 
 	//トレーナーの名前生成
 	Trainer TrainerName[2] = { "野獣先輩","せいじ" };
@@ -228,7 +230,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	return 0; 
 }
 
-void ScreenReset() {
+void ScreenReset(MyPokemon* mypokemon,EnemyPokemon* enemypokemon){
 
 	//外枠描画--------------------------------------------------------------
 	DrawBoxAA(0, 0, 650, 700, Bk, FALSE);
@@ -236,8 +238,8 @@ void ScreenReset() {
 	//上画面描画------------------------------------------------------------
 	DrawBoxAA(150, 30, 500, 300, Bk, FALSE);	//上画面外枠
 	LoadGraphScreen(UP_x1, UP_y1, "ビーチ.jpg", FALSE);
-	LoadGraphScreen(UP_x1 + 30, UP_y1 + 100, "ゆきぷりん.png",TRUE);
-	LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, "オラポン.png", TRUE);
+	LoadGraphScreen(UP_x1 + 30, UP_y1 + 100, mypokemon[MyPokemonNumber].pokemon.big_picture, TRUE);	//味方のポケモン画像
+	LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, enemypokemon[EnemyPokemonNumber].pokemon.big_picture, TRUE);	//敵のポケモン画像
 	LoadGraphScreen(400,150, "show.png", TRUE);
 	DrawBoxAA(UP_x1, UP_y1+190, UP_x2, UP_y2, Bk, TRUE);	//テキスト部
 	DrawBoxAA(UP_x1+5, UP_y1 + 190+5, UP_x2-5, UP_y2-5, Wh, TRUE);	//テキスト部
@@ -325,14 +327,14 @@ void MoveCreate(Move* Move_Machine) {
 }
 
 void PokemonCreate(Pokemon* pokemon, Move* Move_Machine) {
-	pokemon[0] = { "メタゴン",ノーマル,500,500,200,30,500,Move_Machine[1],Move_Machine[0],Move_Machine[0],Move_Machine[0] };
-	pokemon[1] = { "ゴールドシップ",光,800,800,180,20,1000,Move_Machine[2],Move_Machine[3],Move_Machine[4],Move_Machine[5] };
-	pokemon[2] = { "かぼやん",草,800,800,95,90,350,Move_Machine[6],Move_Machine[7],Move_Machine[8],Move_Machine[9] };
-	pokemon[3] = { "ビリオン", 光,1,1,1,1,1,Move_Machine[10],Move_Machine[11],Move_Machine[12],Move_Machine[13] };
-	pokemon[4] = { "オラポン", 火,600,600,135,30,600,Move_Machine[3],Move_Machine[14],Move_Machine[15],Move_Machine[16] };
-	pokemon[5] = { "クロネコ", 闇,440,440,170,50,770,Move_Machine[17],Move_Machine[2],Move_Machine[15],Move_Machine[18] };
-	pokemon[6] = { "せいじ",水,1000,1000,1,1,900,Move_Machine[19],Move_Machine[20] ,Move_Machine[21] ,Move_Machine[22] };
-	pokemon[7] = { "ゆきぷりん",光,750,750,140,40,600, Move_Machine[23],Move_Machine[0],Move_Machine[0],Move_Machine[0] };
+	pokemon[0] = { "メタゴン","メタゴン.png","メタゴン_小.png",ノーマル,500,500,200,30,500,Move_Machine[1],Move_Machine[0],Move_Machine[0],Move_Machine[0] };
+	pokemon[1] = { "ゴールドシップ","ゴールドシップ.png","ゴールドシップ_小.png",光,800,800,180,20,1000,Move_Machine[2],Move_Machine[3],Move_Machine[4],Move_Machine[5] };
+	pokemon[2] = { "かぼやん","かぼやん.png","かぼやん_小.png",草,800,800,95,90,350,Move_Machine[6],Move_Machine[7],Move_Machine[8],Move_Machine[9] };
+	pokemon[3] = { "ビリオン","ビリオン.png","ビリオン_小.png", 光,1,1,1,1,1,Move_Machine[10],Move_Machine[11],Move_Machine[12],Move_Machine[13] };
+	pokemon[4] = { "オラポン","オラポン.png","オラポン_小.png", 火,600,600,135,30,600,Move_Machine[3],Move_Machine[14],Move_Machine[15],Move_Machine[16] };
+	pokemon[5] = { "クロネコ","クロネコ.png","クロネコ_小.png", 闇,440,440,170,50,770,Move_Machine[17],Move_Machine[2],Move_Machine[15],Move_Machine[18] };
+	pokemon[6] = { "せいじ","せいじ.png","せいじ_小.png",水,1000,1000,1,1,900,Move_Machine[19],Move_Machine[20] ,Move_Machine[21] ,Move_Machine[22] };
+	pokemon[7] = { "ゆきぷりん","ゆきぷりん.png","ゆきぷりん_小.png",光,750,750,140,40,600, Move_Machine[23],Move_Machine[0],Move_Machine[0],Move_Machine[0] };
 	pokemon[9] = { "-" };
 }
 
@@ -493,12 +495,38 @@ void Screen3(MyPokemon* mypokemon) {
 	DrawBoxAA(327, 550, 490, 610, LLb, TRUE);
 
 	//・モンスターボール座標
-	LoadGraphScreen(168, 420, "ゆきぷりん_小.png", TRUE);
-	LoadGraphScreen(168, 485, "オラポン_小.png", TRUE);
-	LoadGraphScreen(168, 550, "せいじ_小.png", TRUE);
-	LoadGraphScreen(335, 435, "メタゴン_小.png", TRUE);
-	LoadGraphScreen(335, 495, "クロネコ_小.png", TRUE);
-	LoadGraphScreen(335, 560, "ゴールドシップ_小.png", TRUE);
+	int height,SizeX, SizeY, GrHandle;
+
+	GrHandle = LoadGraph(mypokemon[0].pokemon.sml_picture);
+	GetGraphSize(GrHandle, &SizeX, &SizeY);
+	height = (int)((30 - SizeY) / 2);
+	LoadGraphScreen(168, 425 + height, mypokemon[0].pokemon.sml_picture, TRUE);
+
+	GrHandle = LoadGraph(mypokemon[2].pokemon.sml_picture);
+	GetGraphSize(GrHandle, &SizeX, &SizeY);
+	height = (int)((30 - SizeY) / 2);
+	LoadGraphScreen(168, 490 + height, mypokemon[2].pokemon.sml_picture, TRUE);
+
+	GrHandle = LoadGraph(mypokemon[4].pokemon.sml_picture);
+	GetGraphSize(GrHandle, &SizeX, &SizeY);
+	height = (int)((30 - SizeY) / 2);
+	LoadGraphScreen(168, 555 + height, mypokemon[4].pokemon.sml_picture, TRUE);
+
+	GrHandle = LoadGraph(mypokemon[1].pokemon.sml_picture);
+	GetGraphSize(GrHandle, &SizeX, &SizeY);
+	height = (int)((30 - SizeY) / 2);
+	LoadGraphScreen(335, 435 + height, mypokemon[1].pokemon.sml_picture, TRUE);
+
+	GrHandle = LoadGraph(mypokemon[3].pokemon.sml_picture);
+	GetGraphSize(GrHandle, &SizeX, &SizeY);
+	height = (int)((30 - SizeY) / 2);
+	LoadGraphScreen(335, 500 + height, mypokemon[3].pokemon.sml_picture, TRUE);
+
+	GrHandle = LoadGraph(mypokemon[5].pokemon.sml_picture);
+	GetGraphSize(GrHandle, &SizeX, &SizeY);
+	height = (int)((30 - SizeY) / 2);
+	LoadGraphScreen(335, 565 + height, mypokemon[5].pokemon.sml_picture, TRUE);
+
 	//ポケモン名前
 	DrawString(205, 415, mypokemon[0].pokemon.name, Wh);
 	DrawString(205, 480, mypokemon[2].pokemon.name, Wh);

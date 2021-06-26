@@ -19,4 +19,84 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="show.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="オラポン.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="オラポン_小.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="カーソル右下.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="カーソル右上.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="カーソル左下.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="カーソル左上.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="かぼやん .png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="かぼやん_小.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="クロネコ.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="クロネコ_小.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="ゴールドシップ.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="ゴールドシップ_小.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="せいじ.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="せいじ_小.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="ビーチ.jpg">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="ビリオン.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="ビリオン_小.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="ボール.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="ボール右上.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="メタゴン.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="メタゴン_小.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="モンスターボール.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="モンスターボール右上.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="ゆきぷりん.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="ゆきぷりん_小.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
