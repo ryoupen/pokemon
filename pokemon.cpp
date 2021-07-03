@@ -62,6 +62,9 @@ int MoveNumber = 1;
 int MyPokemonNumber = 0;
 int EnemyPokemonNumber = 0;
 
+int MyPokemon_flg = 0;
+int EnemyPokemon_flg = 0;
+
 //属性
 enum Element{ノーマル,火,水,草,光,闇};
 
@@ -110,6 +113,7 @@ typedef struct {
 
 //プロトタイプ宣言--------------------------------------------------------------------------------------------------------------------
 void ScreenReset(MyPokemon* mypokemon,EnemyPokemon* enemypokemon);
+void UpInitScreen(MyPokemon* mypokemon, EnemyPokemon* enemypokemon);
 void MoveCreate(Move* Move_Machine);
 void PokemonCreate(Pokemon *pokemon, Move* Move_Machine);
 void EnemyTextHpgauge(EnemyPokemon* enemypokemon);
@@ -121,7 +125,8 @@ void Screen1();
 void Screen2(MyPokemon* mypokemon);
 void Screen3(MyPokemon* mypokemon);
 void TurnCheck(MyPokemon* mypokemon, EnemyPokemon* enemypokemon);
-void PokemonChange(int MyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokemon* enemypokemon);
+void MyPokemonChange(int MyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokemon* enemypokemon);
+void EnemyPokemonChange(int EnemyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokemon* enemypokemon);
 void Myturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon);
 void Enemyturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon);
 void Abutton();
@@ -162,8 +167,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Pokemon pokemon[PokeNum];
 	PokemonCreate(pokemon,Move_Machine);
 
-	MyPokemon mypokemon[MAXPokemon] = { pokemon[0],pokemon[1],pokemon[2],pokemon[3],pokemon[4],pokemon[5] };
-	EnemyPokemon enemypokemon[MAXPokemon] = { pokemon[7],pokemon[9],pokemon[9],pokemon[9],pokemon[9],pokemon[9] };
+	MyPokemon mypokemon[MAXPokemon] = { pokemon[0],pokemon[1],pokemon[2],pokemon[3],pokemon[4],pokemon[9] };
+	EnemyPokemon enemypokemon[MAXPokemon] = { pokemon[3],pokemon[7],pokemon[9],pokemon[9],pokemon[9],pokemon[9] };
 
 	//画面初期化------------------------------------------------------------------------------
 	ScreenReset(mypokemon,enemypokemon);
@@ -173,40 +178,35 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetFontSize(22);
 	DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ポケモントレーナーの %sが\nしょうぶを しかけてきた！", TrainerName[0]);
 	Abutton();
+
 	SetFontSize(22);
-	DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+	LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, enemypokemon[EnemyPokemonNumber].pokemon.big_picture, TRUE);	//敵のポケモン画像
+	UpInitScreen(mypokemon, enemypokemon);
 	DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ポケモントレーナーの %sは\n%sを くりだした！", TrainerName[0], enemypokemon[EnemyPokemonNumber].pokemon.name);
 	EnemyTextHpgauge(enemypokemon);
 	Abutton();
+
 	SetFontSize(22);
-	DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+	LoadGraphScreen(UP_x1 + 35, UP_y1 + 80, mypokemon[MyPokemonNumber].pokemon.big_picture, TRUE);	//味方のポケモン画像
+	UpInitScreen(mypokemon, enemypokemon);
 	DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ゆけっ！ %s！", mypokemon[MyPokemonNumber].pokemon.name);
 	MyTextHpgauge(mypokemon);
 	Abutton();
+
 	SetFontSize(22);
 
 	//画面選択(初期画面(1))
 	int flg = 1;
 
-	//戦闘
+	//戦闘ループ
 	while(1) {
 		
 		SetFontSize(22);
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sはどうする？", mypokemon[MyPokemonNumber].pokemon.name);
 
-		//flg=0の時、戦闘終了
-		if (flg == 0 || enemypokemon[EnemyPokemonNumber].pokemon.HP <= 0) {
-			SetFontSize(180);
-			SetFontThickness(9);
-			ChangeFont("Yu Gothic UI", DX_CHARSET_DEFAULT);
-			DrawString(0, 60, "あなたの", Bk);
-			DrawString(0, 430, "勝利です", Bk);
-			break;
-		}
-
 		//flg=1の時、画面1に移動
-		else if (flg == 1) {
+		if (flg == 1) {
 			Screen1();
 			flg = Select1(flg, mypokemon, enemypokemon);
 		}
@@ -237,12 +237,8 @@ void ScreenReset(MyPokemon* mypokemon,EnemyPokemon* enemypokemon){
 
 	//上画面描画------------------------------------------------------------
 	DrawBoxAA(150, 30, 500, 300, Bk, FALSE);	//上画面外枠
-	LoadGraphScreen(UP_x1, UP_y1, "ビーチ.jpg", FALSE);
-	LoadGraphScreen(UP_x1 + 30, UP_y1 + 100, mypokemon[MyPokemonNumber].pokemon.big_picture, TRUE);	//味方のポケモン画像
-	LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, enemypokemon[EnemyPokemonNumber].pokemon.big_picture, TRUE);	//敵のポケモン画像
-	LoadGraphScreen(400,150, "show.png", TRUE);
-	DrawBoxAA(UP_x1, UP_y1+190, UP_x2, UP_y2, Bk, TRUE);	//テキスト部
-	DrawBoxAA(UP_x1+5, UP_y1 + 190+5, UP_x2-5, UP_y2-5, Wh, TRUE);	//テキスト部
+	LoadGraphScreen(UP_x1, UP_y1, "ビーチ.jpg", FALSE);	//背景画像
+	UpInitScreen(mypokemon, enemypokemon);	//上画面テキスト部
 	DrawBoxAA(UP_x1, UP_y1, UP_x2, UP_y2, Bk, FALSE);	//上画面内枠
 
 	//スピーカー
@@ -1041,42 +1037,42 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 					if (cursor == 1) {
 						MyPokemonChangeNumber = 0;
 						if (MyPokemonNumber != MyPokemonChangeNumber) {
-							PokemonChange(MyPokemonChangeNumber,mypokemon, enemypokemon);
+							MyPokemonChange(MyPokemonChangeNumber,mypokemon, enemypokemon);
 						}
 					}
 
 					else if (cursor == 2) {
 						MyPokemonChangeNumber = 1;
 						if (MyPokemonNumber != MyPokemonChangeNumber) {
-							PokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
+							MyPokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
 						}
 					}
 
 					else if (cursor == 3) {
 						MyPokemonChangeNumber = 2;
 						if (MyPokemonNumber != MyPokemonChangeNumber) {
-							PokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
+							MyPokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
 						}
 					}
 
 					else if (cursor == 4) {
 						MyPokemonChangeNumber = 3;
 						if (MyPokemonNumber != MyPokemonChangeNumber) {
-							PokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
+							MyPokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
 						}
 					}
 
 					else if (cursor == 5) {
 						MyPokemonChangeNumber = 4;
 						if (MyPokemonNumber != MyPokemonChangeNumber) {
-							PokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
+							MyPokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
 						}
 					}
 
 					else if (cursor == 6) {
 						MyPokemonChangeNumber = 5;
 						if (MyPokemonNumber != MyPokemonChangeNumber) {
-							PokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
+							MyPokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
 						}
 					}
 
@@ -1192,7 +1188,7 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 			else if (MouseX >= 160 && MouseX <= 323 && MouseY >= 410 && MouseY <= 470) {
 				MyPokemonChangeNumber = 0;
 				if (MyPokemonNumber != MyPokemonChangeNumber) {
-					PokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
+					MyPokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
 				}
 				cnt = 1;
 				flg = 1;
@@ -1202,7 +1198,7 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 			else if (MouseX >= 327 && MouseX <= 490 && MouseY >= 420 && MouseY <= 480) {
 				MyPokemonChangeNumber = 1;
 				if (MyPokemonNumber != MyPokemonChangeNumber) {
-					PokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
+					MyPokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
 				}
 				cnt = 1;
 				flg = 1;
@@ -1212,7 +1208,7 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 			else if (MouseX >= 160 && MouseX <= 323 && MouseY >= 475 && MouseY <= 535) {
 				MyPokemonChangeNumber = 2;
 				if (MyPokemonNumber != MyPokemonChangeNumber) {
-					PokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
+					MyPokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
 				}
 				cnt = 1;
 				flg = 1;
@@ -1222,7 +1218,7 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 			else if (MouseX >= 327 && MouseX <= 490 && MouseY >= 485 && MouseY <= 545) {
 				MyPokemonChangeNumber = 3;
 				if (MyPokemonNumber != MyPokemonChangeNumber) {
-					PokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
+					MyPokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
 				}
 				cnt = 1;
 				flg = 1;
@@ -1232,7 +1228,7 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 			else if (MouseX >= 160 && MouseX <= 323 && MouseY >= 540 && MouseY <= 600) {
 				MyPokemonChangeNumber =	4;
 				if (MyPokemonNumber != MyPokemonChangeNumber) {
-					PokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
+					MyPokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
 				}
 				cnt = 1;
 				flg = 1;
@@ -1242,7 +1238,7 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 			else if (MouseX >= 327 && MouseX <= 490 && MouseY >= 550 && MouseY <= 610) {
 				MyPokemonChangeNumber = 5;
 				if (MyPokemonNumber != MyPokemonChangeNumber) {
-					PokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
+					MyPokemonChange(MyPokemonChangeNumber, mypokemon, enemypokemon);
 				}
 				cnt = 1;
 				flg = 1;
@@ -1345,17 +1341,27 @@ void TurnCheck(MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 
 	if (MySPD >= EnemySPD) {
 		Myturn(mypokemon, enemypokemon);
-		Enemyturn(mypokemon, enemypokemon);
+		if (EnemyPokemon_flg == 1) {
+			EnemyPokemon_flg = 0;
+		}
+		else {
+			Enemyturn(mypokemon, enemypokemon);
+		}
 	}
 
 	else if (EnemySPD > MySPD) {
 		Enemyturn(mypokemon, enemypokemon);
-		Myturn(mypokemon, enemypokemon);
+		if (MyPokemon_flg == 1) {
+			MyPokemon_flg = 0;
+		}
+		else {
+			Myturn(mypokemon, enemypokemon);
+		}
 	}
 
 }
 
-void PokemonChange(int MyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
+void MyPokemonChange(int MyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 	
 	if (mypokemon[MyPokemonChangeNumber].pokemon.MAXHP != 0) {
 
@@ -1367,14 +1373,43 @@ void PokemonChange(int MyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokemon
 		MyPokemonNumber = MyPokemonChangeNumber;
 
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+		LoadGraphScreen(UP_x1, UP_y1, "ビーチ.jpg", FALSE);	//背景画像
+		LoadGraphScreen(UP_x1 + 35, UP_y1 + 80, mypokemon[MyPokemonNumber].pokemon.big_picture, TRUE);	//味方のポケモン画像
+		LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, enemypokemon[EnemyPokemonNumber].pokemon.big_picture, TRUE);	//敵のポケモン画像
+		UpInitScreen(mypokemon, enemypokemon);
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ゆけっ！ %s！", mypokemon[MyPokemonNumber].pokemon.name);
 		MyTextHpgauge(mypokemon);
+		EnemyTextHpgauge(enemypokemon);
 		Abutton();
 
 		Enemyturn(mypokemon, enemypokemon);
 
 	}
 
+}
+
+void EnemyPokemonChange(int EnemyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
+
+	if (enemypokemon[EnemyPokemonChangeNumber].pokemon.MAXHP != 0) {
+
+		SetFontSize(22);
+		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s こうたい！\nもどれ！", enemypokemon[EnemyPokemonNumber].pokemon.name);
+		Abutton();
+
+		EnemyPokemonNumber++;
+
+		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+		LoadGraphScreen(UP_x1, UP_y1, "ビーチ.jpg", FALSE);	//背景画像
+		LoadGraphScreen(UP_x1 + 35, UP_y1 + 80, mypokemon[MyPokemonNumber].pokemon.big_picture, TRUE);	//味方のポケモン画像
+		LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, enemypokemon[EnemyPokemonNumber].pokemon.big_picture, TRUE);	//敵のポケモン画像
+		UpInitScreen(mypokemon, enemypokemon);
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ゆけっ！ %s！", enemypokemon[EnemyPokemonNumber].pokemon.name);
+		MyTextHpgauge(mypokemon);
+		EnemyTextHpgauge(enemypokemon);
+		Abutton();
+
+	}
 }
 
 void Myturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
@@ -1409,6 +1444,19 @@ void Myturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
 		MySelectMove(enemypokemon, mypokemon, &mypokemon[MyPokemonNumber].pokemon.MV4);
 	}
 
+	//敵のHPが0になったとき
+	if (enemypokemon[EnemyPokemonNumber].pokemon.HP <= 0) {
+		EnemyPokemonNumber++;
+		//敵が全滅したとき
+		if (enemypokemon[EnemyPokemonNumber].pokemon.HP == 0) {
+			exit(0);
+		}
+		else {
+			EnemyPokemonNumber--;
+			EnemyPokemonChange(EnemyPokemonNumber, mypokemon, enemypokemon);
+		}
+		EnemyPokemon_flg = 1;	//ターンを飛ばす
+	}
 }
 
 void Enemyturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
@@ -1445,6 +1493,11 @@ void Enemyturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", enemypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV4.name);
 		Abutton(); 
 		EnemySelectMove(mypokemon, enemypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV4);
+	}
+
+	//味方のHPがになったとき
+	if (enemypokemon[EnemyPokemonNumber].pokemon.HP <= 0) {
+		//味方が全滅したとき
 	}
 
 }
@@ -1535,12 +1588,11 @@ void MySelectMove(EnemyPokemon* enemypokemon,MyPokemon* mypokemon,Move* MyMove) 
 		else {
 			ElementEffect = 1.0;
 		}
-		
+
+		int kyusyo = 0;
 		//9%の確率できゅうしょに当たる
 		if ((rand() % 100) >= 90) {
-			Sleep(500);
-			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "きゅうしょにあたった！");
+			kyusyo = 1;
 			ElementEffect += 1.5;
 		}
 
@@ -1558,11 +1610,19 @@ void MySelectMove(EnemyPokemon* enemypokemon,MyPokemon* mypokemon,Move* MyMove) 
 			enemypokemon[EnemyPokemonNumber].pokemon.HP = enemypokemon[EnemyPokemonNumber].pokemon.HP - 1;
 			EnemyTextHpgauge(enemypokemon);
 			HPCount--;
+			if (enemypokemon[EnemyPokemonNumber].pokemon.HP <= 0) break;
 		}
+
+		if (kyusyo) {
+			SetFontSize(22);
+			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "きゅうしょにあたった！");
+		}
+
 	}
 
 	else {
-
+		SetFontSize(22);
 		//当たらなかった。
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
 		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sには\n当たらなかった！", enemypokemon[EnemyPokemonNumber].pokemon.name);
@@ -1611,11 +1671,10 @@ void EnemySelectMove(MyPokemon* enemypokemon, EnemyPokemon* mypokemon, Move* MyM
 			ElementEffect = 1.0;
 		}
 
+		int kyusyo = 0;
 		//9%の確率できゅうしょに当たる
 		if ((rand() % 100) >= 90) {
-			Sleep(500);
-			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "きゅうしょにあたった！");
+			kyusyo = 1;
 			ElementEffect += 1.5;
 		}
 
@@ -1629,10 +1688,16 @@ void EnemySelectMove(MyPokemon* enemypokemon, EnemyPokemon* mypokemon, Move* MyM
 		//HPを減らす
 		int HPCount = AtkNum;
 
-		while (HPCount >= 1) {
+		while (HPCount >= 1 || enemypokemon[MyPokemonNumber].pokemon.HP <= 0) {
 			enemypokemon[MyPokemonNumber].pokemon.HP = enemypokemon[MyPokemonNumber].pokemon.HP - 1;
 			MyTextHpgauge(enemypokemon);
 			HPCount--;
+		}
+
+		if (kyusyo) {
+			SetFontSize(22);
+			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "きゅうしょにあたった！");
 		}
 	}
 
@@ -1768,4 +1833,11 @@ unsigned int  ColorChange(int ColorNumber) {
 
 
 	return Color;
+}
+
+void UpInitScreen(MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
+
+	DrawBoxAA(UP_x1, UP_y1 + 190, UP_x2, UP_y2, Bk, TRUE);	//テキスト部
+	DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+
 }
