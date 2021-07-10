@@ -57,6 +57,7 @@ int MouseX, MouseY, MouseInput, LogType;
 
 //技の選択
 int MoveNumber = 1;
+int EnemyMoveNumber = 1;
 
 //場のポケモン
 int MyPokemonNumber = 0;
@@ -76,8 +77,7 @@ typedef struct {
 	int MAXMoveCount;
 	int Hitrate;
 	float ATKscale;
-	int ATKcount;
-	int other;
+	int MoveCategory;
 }Move;
 
 //ポケモン構造体宣言
@@ -296,41 +296,42 @@ void ScreenReset(MyPokemon* mypokemon,EnemyPokemon* enemypokemon){
 }
 
 void MoveCreate(Move* Move_Machine) {
-	Move_Machine[0] = {"-",ノーマル,0,0,0,0,0,0 };
-	Move_Machine[1] = {"へんしん",ノーマル,1,1,100,0,1,1};	//技を４つ入れ替え
-	Move_Machine[2] = {"ちょうはつ",ノーマル,15,15,80,0,1,2};	//相手の攻撃1.2倍、防御下がる1.2倍
-	Move_Machine[3] = {"キック",ノーマル,20,20,90,1.1,1,0};
-	Move_Machine[4] = {"ビルドアップ",ノーマル,10,10,60,0,1,3};	//味方の攻撃1.5倍
-	Move_Machine[5] = {"つるぎのまい",草,10,10,90,1,1,0};
-	Move_Machine[6] = {"ソーラービーム",草,15,15,70,2,1,0};
-	Move_Machine[7] = {"はっぱカッター",草,25,25,95,1.2,1,0};
-	Move_Machine[8] = {"からにこもる",水,30,30,100,0,1,4};	//味方の防御1.2倍
-	Move_Machine[9] = {"あなをほる",ノーマル,25,25,80,1.1,1,0};
-	Move_Machine[10] = {"スペシウム",光};
-	Move_Machine[11] = {"スクライド",ノーマル};
-	Move_Machine[12] = {"ヘブンミックス",ノーマル};
-	Move_Machine[13] = {"エンブレイス",光};
-	Move_Machine[14] = {"ブレス",火,25,25,90,1.1,1,0};
-	Move_Machine[15] = {"こうそくいどう",ノーマル,15,15,90,0,1,5};	//味方のスピード1.3倍
-	Move_Machine[16] = {"ものまね",ノーマル,10,10,90,0,1,6};		//相手の攻撃パクリ
-	Move_Machine[17] = {"アイアンクロー",闇,15,15,70,1.3,1,0};
-	Move_Machine[18] = {"メロメロ",ノーマル,10,10,70,0,1,7};		//相手をこんらん（仮）状態にする
-	Move_Machine[19] = { "水風呂",水,30,30,10,0,1,4 };		//味方の防御1.2倍
-	Move_Machine[20] = { "配達",ノーマル,99,99,10,0.2,1,0};	
-	Move_Machine[21] = { "住所特定",ノーマル,1,1,70,0,1,7 };	//味方の的中率100%敵の防御0.8倍
-	Move_Machine[22] = { "おしゃべり",ノーマル,50,50,50,0,1,8 };		//敵の防御力0.5倍
-	Move_Machine[23] = { "はねる",ノーマル,99,99,10,3.5,1,0};
+	//　　　　　　　　技名　　　　　　　　　　　属性　　　　回数　　命中率　倍率　　種類
+	Move_Machine[0] = {"-",						ノーマル,	0,	0,	0,		0,		0};
+	Move_Machine[1] = {"へんしん",				ノーマル,	1,	1,	100,	0,		1};	//技を４つ入れ替え
+	Move_Machine[2] = {"ちょうはつ",			ノーマル,	10,	10,	70,		0,		2};	//相手の攻撃1.2倍、防御0.8倍
+	Move_Machine[3] = {"キック",				ノーマル,	20,	20,	90,		1.2	,	0};
+	Move_Machine[4] = {"ビルドアップ",			ノーマル,	10,	10,	50,		0,		3};	//自分の攻撃1.5倍
+	Move_Machine[5] = {"つるぎのまい",			草,			20,	20,	90,		1.2,	0};
+	Move_Machine[6] = {"ソーラービーム",		草,			10,	10,	50,		1.5,	0};
+	Move_Machine[7] = {"はっぱカッター",		草,			25,	25,	95,		1.1,	0};
+	Move_Machine[8] = {"からにこもる",			水,			10,	10,	75,		0,		4};	//自分の防御1.2倍
+	Move_Machine[9] = {"ロッククライム",		ノーマル,	10,	10,	70,		1.35,	0};
+	Move_Machine[10] = {"スペシウム",			光,			20,	20,	90,		1.15,	0}; 
+	Move_Machine[11] = {"スクライド",			ノーマル,	15,	15,	80,		1.2,	0};
+	Move_Machine[12] = {"ヘブンミックス",		ノーマル,	15,	15,	80,		1.2,	0};
+	Move_Machine[13] = {"エンブレイス",			光,			10,	10,	50,		1.45,	0};
+	Move_Machine[14] = {"ブレス",				火,			25,	25,	95,		1.1,	0};
+	Move_Machine[15] = {"こうそくいどう",		ノーマル,	10,	10,	90,		0,		5};	//自分のスピード1.3倍
+	Move_Machine[16] = {"ものまね",				ノーマル,	20,	20,	90,		0,		6};	//相手の攻撃パクリ
+	Move_Machine[17] = {"アイアンクロー",		闇,			10,	10,	70,		1.35,	0};
+	Move_Machine[18] = {"つめをとぐ",			ノーマル,	10,	10,	75,		0,		4}; //自分の防御1.2倍
+	Move_Machine[19] = {"サウナ",				水,			10,	10,	0,		0,		4};	//自分の防御1.2倍
+	Move_Machine[20] = {"はいたつ",				ノーマル,	99,	99,	0,		0.5,	0};	
+	Move_Machine[21] = {"じゅうしょとくてい",	ノーマル,	1,	1,	70,		0,		7};	//自分の的中率100%、敵の防御0.8倍
+	Move_Machine[22] = {"おしゃべり",			ノーマル,	2,	2,	0,		0,		8};	//敵の防御力0.5倍
+	Move_Machine[23] = {"はねる",				ノーマル,	10,	10,	10,		5,		0};
 }
 
 void PokemonCreate(Pokemon* pokemon, Move* Move_Machine) {
-	pokemon[0] = { "メタゴン","メタゴン.png","メタゴン_小.png",ノーマル,500,500,200,30,500,Move_Machine[1],Move_Machine[0],Move_Machine[0],Move_Machine[0] };
-	pokemon[1] = { "ゴールドシップ","ゴールドシップ.png","ゴールドシップ_小.png",光,800,800,180,20,1000,Move_Machine[2],Move_Machine[3],Move_Machine[4],Move_Machine[5] };
-	pokemon[2] = { "かぼやん","かぼやん.png","かぼやん_小.png",草,800,800,95,90,350,Move_Machine[6],Move_Machine[7],Move_Machine[8],Move_Machine[9] };
-	pokemon[3] = { "ビリオン","ビリオン.png","ビリオン_小.png", 光,1,1,1,1,1,Move_Machine[10],Move_Machine[11],Move_Machine[12],Move_Machine[13] };
-	pokemon[4] = { "オラポン","オラポン.png","オラポン_小.png", 火,600,600,135,30,600,Move_Machine[3],Move_Machine[14],Move_Machine[15],Move_Machine[16] };
-	pokemon[5] = { "クロネコ","クロネコ.png","クロネコ_小.png", 闇,440,440,170,50,770,Move_Machine[17],Move_Machine[2],Move_Machine[15],Move_Machine[18] };
-	pokemon[6] = { "せいじ","せいじ.png","せいじ_小.png",水,1000,1000,1,1,900,Move_Machine[19],Move_Machine[20] ,Move_Machine[21] ,Move_Machine[22] };
-	pokemon[7] = { "ゆきぷりん","ゆきぷりん.png","ゆきぷりん_小.png",光,750,750,140,40,600, Move_Machine[23],Move_Machine[0],Move_Machine[0],Move_Machine[0] };
+	pokemon[0] = { "メタゴン",		"メタゴン.png",			"メタゴン_小.png",		ノーマル,	250,250, 95,50,200,Move_Machine[1], Move_Machine[0], Move_Machine[0], Move_Machine[0] };
+	pokemon[1] = { "ゴールドシップ","ゴールドシップ.png",	"ゴールドシップ_小.png",光,			280,280,120,30,300,Move_Machine[2], Move_Machine[3], Move_Machine[4], Move_Machine[5] };
+	pokemon[2] = { "かぼやん",		"かぼやん.png",			"かぼやん_小.png",		草,			290,290, 80,65,250,Move_Machine[6], Move_Machine[7], Move_Machine[8], Move_Machine[9] };
+	pokemon[3] = { "ビリオン",		"ビリオン.png",			"ビリオン_小.png",		光,			275,275, 90,50,275,Move_Machine[10],Move_Machine[11],Move_Machine[12],Move_Machine[13] };
+	pokemon[4] = { "オラポン",		"オラポン.png",			"オラポン_小.png",		火,			250,250, 80,40,285,Move_Machine[3], Move_Machine[14],Move_Machine[15],Move_Machine[16] };
+	pokemon[5] = { "クロネコ",		"クロネコ.png",			"クロネコ_小.png",		闇,			220,220, 85,40,290,Move_Machine[17],Move_Machine[2], Move_Machine[15],Move_Machine[18] };
+	pokemon[6] = { "せいじ",		"せいじ.png",			"せいじ_小.png",		水,			100,100, 90, 1,300,Move_Machine[19],Move_Machine[20],Move_Machine[21],Move_Machine[22] };
+	pokemon[7] = { "ゆきぷりん",	"ゆきぷりん.png",		"ゆきぷりん_小.png",	光,			295,295,120,40,250,Move_Machine[23],Move_Machine[0], Move_Machine[0], Move_Machine[0] };
 	pokemon[9] = { "-" };
 }
 
@@ -1336,8 +1337,11 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 void TurnCheck(MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 
 	srand((unsigned)time(NULL));
-	float MySPD = ((rand() % 600 * 0.001) + 0.7) * (mypokemon[0].pokemon.SPD);
+	float MySPD = ((rand() % 600 * 0.001) + 0.7) * (mypokemon[MyPokemonNumber].pokemon.SPD);
 	float EnemySPD = ((rand() % 600 * 0.001) + 0.7) * (enemypokemon[EnemyPokemonNumber].pokemon.SPD);
+
+	srand((unsigned)time(NULL));
+	EnemyMoveNumber = rand() % 4 + 1;
 
 	if (MySPD >= EnemySPD) {
 		Myturn(mypokemon, enemypokemon);
@@ -1461,10 +1465,6 @@ void Myturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
 
 void Enemyturn(MyPokemon *mypokemon, EnemyPokemon *enemypokemon) {
 
-	srand((unsigned)time(NULL));
-	int EnemyMoveNumber;
-	EnemyMoveNumber = rand() % 4 + 1;
-
 	SetFontSize(22);
 
 	if (EnemyMoveNumber == 1) {
@@ -1560,65 +1560,174 @@ void MySelectMove(EnemyPokemon* enemypokemon,MyPokemon* mypokemon,Move* MyMove) 
 	int AtkNum = 0;
 	float ElementEffect = 0;
 
+	//乱数調整
 	srand((unsigned)time(NULL));
 
 	//命中率
 	if (MyMove->Hitrate - ((rand() % 100) + 1) >= 0) {
 
-		if ((MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
-			(MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
-			(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
-			(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5) ||
-			(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4)) {
-			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　いまひとつのようだ...");
-			ElementEffect = 0.7;
-		}
-
-		else if ((MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
-			(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
-			(MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
-			(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4) ||
-			(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5)) {
-			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　ばつぐんだ！");
-			ElementEffect = 1.3;
-		}
-
-		else {
-			ElementEffect = 1.0;
-		}
-
+		int HPCount = 0;
 		int kyusyo = 0;
-		//9%の確率できゅうしょに当たる
-		if ((rand() % 100) >= 90) {
-			kyusyo = 1;
-			ElementEffect += 1.5;
-		}
 
 		//ポケモンの技
-		switch (MyMove->other) {
+		switch (MyMove->MoveCategory) {
 			//通常攻撃の時
 			case 0:
+				if ((MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
+					(MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
+					(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
+					(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5) ||
+					(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4)) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　いまひとつのようだ...");
+					ElementEffect = 0.7;
+				}
+
+				else if ((MyMove->Type == 2 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 1) ||
+					(MyMove->Type == 3 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 2) ||
+					(MyMove->Type == 1 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 3) ||
+					(MyMove->Type == 5 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 4) ||
+					(MyMove->Type == 4 && enemypokemon[EnemyPokemonNumber].pokemon.ELE == 5)) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　ばつぐんだ！");
+					ElementEffect = 1.3;
+				}
+
+				else {
+					ElementEffect = 1.0;
+				}
+
+				//9%の確率できゅうしょに当たる
+				if ((rand() % 100) >= 90) {
+					kyusyo = 1;
+					ElementEffect += 1.5;
+				}
+
 				AtkNum = ((mypokemon[MyPokemonNumber].pokemon.ATK * MyMove->ATKscale - enemypokemon[EnemyPokemonNumber].pokemon.DEF) * ElementEffect * ((rand() % 700 * 0.001) + 0.7));
+				HPCount = AtkNum;
+
+				//HPを減らす
+				while (HPCount >= 1) {
+					enemypokemon[EnemyPokemonNumber].pokemon.HP -= 1;
+					EnemyTextHpgauge(enemypokemon);
+					HPCount--;
+					if (enemypokemon[EnemyPokemonNumber].pokemon.HP <= 0) break;
+				}
+
+				if (kyusyo) {
+					SetFontSize(22);
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "きゅうしょにあたった！");
+				}
+				break;
+
+			//技を４つ入れ替え
+			case 1:
+				mypokemon[MyPokemonNumber].pokemon.MV1 = enemypokemon[EnemyPokemonNumber].pokemon.MV1;
+				mypokemon[MyPokemonNumber].pokemon.MV2 = enemypokemon[EnemyPokemonNumber].pokemon.MV2;
+				mypokemon[MyPokemonNumber].pokemon.MV3 = enemypokemon[EnemyPokemonNumber].pokemon.MV3;
+				mypokemon[MyPokemonNumber].pokemon.MV4 = enemypokemon[EnemyPokemonNumber].pokemon.MV4;
+				break;
+
+			//相手の攻撃1.2倍、防御0.8倍
+			case 2:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのこうげきがあがった！", enemypokemon[EnemyPokemonNumber].pokemon.name);
+				Abutton();
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのぼうぎょがさがった！", enemypokemon[EnemyPokemonNumber].pokemon.name);
+				Abutton();
+				enemypokemon[EnemyPokemonNumber].pokemon.ATK *= 1.2;
+				enemypokemon[EnemyPokemonNumber].pokemon.DEF *= 0.8;
+				break;
+
+			//自分の攻撃1.5倍
+			case 3:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのこうげきがあがった！", mypokemon[MyPokemonNumber].pokemon.name);
+				Abutton();
+				mypokemon[MyPokemonNumber].pokemon.ATK *= 1.5;
+				break;
+
+			//自分の防御1.1倍
+			case 4:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのぼうぎょがあがった！", mypokemon[MyPokemonNumber].pokemon.name);
+				Abutton();
+				mypokemon[MyPokemonNumber].pokemon.DEF *= 1.1;
+				break;
+
+			//自分のスピード1.3倍
+			case 5:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのすばやさがあがった！", mypokemon[MyPokemonNumber].pokemon.name);
+				Abutton();
+				mypokemon[MyPokemonNumber].pokemon.SPD *= 1.3;
+				break;
+
+			//相手の攻撃パクリ
+			case 6:
+				SetFontSize(22);
+				if (EnemyMoveNumber == 1) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV1.name);
+					Abutton();
+					MySelectMove(enemypokemon, mypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV1);
+				}
+
+				else if (EnemyMoveNumber == 2) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV2.name);
+					Abutton();
+					MySelectMove(enemypokemon, mypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV2);
+				}
+
+				else if (EnemyMoveNumber == 3) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV3.name);
+					Abutton();
+					MySelectMove(enemypokemon, mypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV3);
+				}
+
+				else if (EnemyMoveNumber == 4) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[MyPokemonNumber].pokemon.name, enemypokemon[EnemyPokemonNumber].pokemon.MV4.name);
+					Abutton();
+					MySelectMove(enemypokemon, mypokemon, &enemypokemon[EnemyPokemonNumber].pokemon.MV4);
+				}
+				break;
+
+			//自分の命中率100%、敵の防御力0.8倍
+			case 7:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのめいちゅうりつがあがった！", mypokemon[MyPokemonNumber].pokemon.name);
+				Abutton();
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのぼうぎょがさがった！", enemypokemon[EnemyPokemonNumber].pokemon.name);
+				Abutton();
+				enemypokemon[EnemyPokemonNumber].pokemon.DEF *= 0.8;
+				mypokemon[MyPokemonNumber].pokemon.MV1.Hitrate = 100;
+				mypokemon[MyPokemonNumber].pokemon.MV2.Hitrate = 100;
+				mypokemon[MyPokemonNumber].pokemon.MV3.Hitrate = 100;
+				mypokemon[MyPokemonNumber].pokemon.MV4.Hitrate = 100;
+				break;
+
+			//敵の防御力0.5倍
+			case 8:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのぼうぎょがさがった！", enemypokemon[EnemyPokemonNumber].pokemon.name);
+				Abutton();
+				enemypokemon[EnemyPokemonNumber].pokemon.DEF *= 0.5;
+				break;
 		}
-
-		//HPを減らす
-		int HPCount = AtkNum;
-
-		while (HPCount >= 1) {
-			enemypokemon[EnemyPokemonNumber].pokemon.HP = enemypokemon[EnemyPokemonNumber].pokemon.HP - 1;
-			EnemyTextHpgauge(enemypokemon);
-			HPCount--;
-			if (enemypokemon[EnemyPokemonNumber].pokemon.HP <= 0) break;
-		}
-
-		if (kyusyo) {
-			SetFontSize(22);
-			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "きゅうしょにあたった！");
-		}
-
 	}
 
 	else {
@@ -1642,62 +1751,174 @@ void EnemySelectMove(MyPokemon* enemypokemon, EnemyPokemon* mypokemon, Move* MyM
 	int AtkNum = 0;
 	float ElementEffect = 0;
 
+	//乱数調整
 	srand((unsigned)time(NULL));
 
 	//命中率
 	if (MyMove->Hitrate - ((rand() % 100) + 1) >= 0) {
 
-		if ((MyMove->Type == 1 && enemypokemon[MyPokemonNumber].pokemon.ELE == 2) ||
-			(MyMove->Type == 2 && enemypokemon[MyPokemonNumber].pokemon.ELE == 3) ||
-			(MyMove->Type == 3 && enemypokemon[MyPokemonNumber].pokemon.ELE == 1) ||
-			(MyMove->Type == 4 && enemypokemon[MyPokemonNumber].pokemon.ELE == 5) ||
-			(MyMove->Type == 5 && enemypokemon[MyPokemonNumber].pokemon.ELE == 4)) {
-			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　いまひとつのようだ...");
-			ElementEffect = 0.7;
-		}
-
-		else if ((MyMove->Type == 2 && enemypokemon[MyPokemonNumber].pokemon.ELE == 1) ||
-			(MyMove->Type == 3 && enemypokemon[MyPokemonNumber].pokemon.ELE == 2) ||
-			(MyMove->Type == 1 && enemypokemon[MyPokemonNumber].pokemon.ELE == 3) ||
-			(MyMove->Type == 5 && enemypokemon[MyPokemonNumber].pokemon.ELE == 4) ||
-			(MyMove->Type == 4 && enemypokemon[MyPokemonNumber].pokemon.ELE == 5)) {
-			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　ばつぐんだ！");
-			ElementEffect = 1.3;
-		}
-
-		else {
-			ElementEffect = 1.0;
-		}
-
+		int HPCount = 0;
 		int kyusyo = 0;
-		//9%の確率できゅうしょに当たる
-		if ((rand() % 100) >= 90) {
-			kyusyo = 1;
-			ElementEffect += 1.5;
-		}
 
 		//ポケモンの技
-		switch (MyMove->other) {
+		switch (MyMove->MoveCategory) {
 			//通常攻撃の時
 			case 0:
+				if ((MyMove->Type == 1 && enemypokemon[MyPokemonNumber].pokemon.ELE == 2) ||
+					(MyMove->Type == 2 && enemypokemon[MyPokemonNumber].pokemon.ELE == 3) ||
+					(MyMove->Type == 3 && enemypokemon[MyPokemonNumber].pokemon.ELE == 1) ||
+					(MyMove->Type == 4 && enemypokemon[MyPokemonNumber].pokemon.ELE == 5) ||
+					(MyMove->Type == 5 && enemypokemon[MyPokemonNumber].pokemon.ELE == 4)) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　いまひとつのようだ...");
+					ElementEffect = 0.7;
+				}
+
+				else if ((MyMove->Type == 2 && enemypokemon[MyPokemonNumber].pokemon.ELE == 1) ||
+					(MyMove->Type == 3 && enemypokemon[MyPokemonNumber].pokemon.ELE == 2) ||
+					(MyMove->Type == 1 && enemypokemon[MyPokemonNumber].pokemon.ELE == 3) ||
+					(MyMove->Type == 5 && enemypokemon[MyPokemonNumber].pokemon.ELE == 4) ||
+					(MyMove->Type == 4 && enemypokemon[MyPokemonNumber].pokemon.ELE == 5)) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "こうかは　ばつぐんだ！");
+					ElementEffect = 1.3;
+				}
+
+				else {
+					ElementEffect = 1.0;
+				}
+
+				//9%の確率できゅうしょに当たる
+				if ((rand() % 100) >= 90) {
+					kyusyo = 1;
+					ElementEffect += 1.5;
+				}
+
 				AtkNum = ((mypokemon[EnemyPokemonNumber].pokemon.ATK * MyMove->ATKscale - enemypokemon[MyPokemonNumber].pokemon.DEF) * ElementEffect * ((rand() % 700 * 0.001) + 0.7));
-		}
+				HPCount = AtkNum;
 
-		//HPを減らす
-		int HPCount = AtkNum;
+				while (HPCount >= 1) {
+					enemypokemon[MyPokemonNumber].pokemon.HP -= 1;
+					MyTextHpgauge(enemypokemon);
+					HPCount--;
+					if (enemypokemon[MyPokemonNumber].pokemon.HP <= 0) break;
+				}
 
-		while (HPCount >= 1 || enemypokemon[MyPokemonNumber].pokemon.HP <= 0) {
-			enemypokemon[MyPokemonNumber].pokemon.HP = enemypokemon[MyPokemonNumber].pokemon.HP - 1;
-			MyTextHpgauge(enemypokemon);
-			HPCount--;
-		}
+				if (kyusyo) {
+					SetFontSize(22);
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "きゅうしょにあたった！");
+				}
+				break;
+			
+			//技を４つ入れ替え
+			case 1:
+				mypokemon[EnemyPokemonNumber].pokemon.MV1 = enemypokemon[MyPokemonNumber].pokemon.MV1;
+				mypokemon[EnemyPokemonNumber].pokemon.MV2 = enemypokemon[MyPokemonNumber].pokemon.MV2;
+				mypokemon[EnemyPokemonNumber].pokemon.MV3 = enemypokemon[MyPokemonNumber].pokemon.MV3;
+				mypokemon[EnemyPokemonNumber].pokemon.MV4 = enemypokemon[MyPokemonNumber].pokemon.MV4;
+				break;
 
-		if (kyusyo) {
-			SetFontSize(22);
-			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "きゅうしょにあたった！");
+			//相手の攻撃1.2倍、防御0.8倍
+			case 2:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのこうげきがあがった！",enemypokemon[MyPokemonNumber].pokemon.name);
+				Abutton();
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのぼうぎょがさがった！", enemypokemon[MyPokemonNumber].pokemon.name);
+				Abutton();
+
+				enemypokemon[MyPokemonNumber].pokemon.ATK *= 1.2;
+				enemypokemon[MyPokemonNumber].pokemon.DEF *= 0.8;
+
+				break;
+
+			//自分の攻撃1.5倍
+			case 3:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのこうげきがあがった！", mypokemon[EnemyPokemonNumber].pokemon.name);
+				Abutton();
+				mypokemon[EnemyPokemonNumber].pokemon.ATK *= 1.5;
+				break;
+
+			//自分の防御1.2倍
+			case 4:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのぼうぎょがあがった！", mypokemon[EnemyPokemonNumber].pokemon.name);
+				Abutton();
+				mypokemon[EnemyPokemonNumber].pokemon.DEF *= 1.1;
+				break;
+
+			//自分のスピード1.3倍
+			case 5:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのすばやさがあがった！", mypokemon[EnemyPokemonNumber].pokemon.name);
+				Abutton();
+				mypokemon[EnemyPokemonNumber].pokemon.SPD *= 1.3;
+				break;
+
+			//相手の攻撃パクリ
+			case 6:
+				SetFontSize(22);
+				if (MoveNumber == 1) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[MyPokemonNumber].pokemon.MV1.name);
+					Abutton();
+					EnemySelectMove(enemypokemon, mypokemon, &enemypokemon[MyPokemonNumber].pokemon.MV1);
+				}
+
+				else if (MoveNumber == 2) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[MyPokemonNumber].pokemon.MV2.name);
+					Abutton();
+					EnemySelectMove(enemypokemon, mypokemon, &enemypokemon[MyPokemonNumber].pokemon.MV2);
+				}
+
+				else if (MoveNumber == 3) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[MyPokemonNumber].pokemon.MV3.name);
+					Abutton();
+					EnemySelectMove(enemypokemon, mypokemon, &enemypokemon[MyPokemonNumber].pokemon.MV3);
+				}
+
+				else if (MoveNumber == 4) {
+					DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+					DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%s の\n%s！", mypokemon[EnemyPokemonNumber].pokemon.name, enemypokemon[MyPokemonNumber].pokemon.MV4.name);
+					Abutton();
+					EnemySelectMove(enemypokemon, mypokemon, &enemypokemon[MyPokemonNumber].pokemon.MV4);
+				}
+				break;
+
+			//自分の命中率100%、敵の防御力0.8倍
+			case 7:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのめいちゅうりつがあがった！", mypokemon[EnemyPokemonNumber].pokemon.name);
+				Abutton();
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのぼうぎょがさがった！", enemypokemon[MyPokemonNumber].pokemon.name);
+				Abutton();
+				enemypokemon[MyPokemonNumber].pokemon.DEF *= 0.8;
+				mypokemon[EnemyPokemonNumber].pokemon.MV1.Hitrate = 100;
+				mypokemon[EnemyPokemonNumber].pokemon.MV2.Hitrate = 100;
+				mypokemon[EnemyPokemonNumber].pokemon.MV3.Hitrate = 100;
+				mypokemon[EnemyPokemonNumber].pokemon.MV4.Hitrate = 100;
+				break;
+
+			//敵の防御力0.5倍
+			case 8:
+				SetFontSize(22);
+				DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+				DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sのぼうぎょがさがった！", enemypokemon[MyPokemonNumber].pokemon.name);
+				Abutton();
+				enemypokemon[MyPokemonNumber].pokemon.DEF *= 0.5;
+				break;
 		}
 	}
 
