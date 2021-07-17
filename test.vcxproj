@@ -180,6 +180,7 @@
     <Image Include="メタゴン_小.png" />
     <Image Include="モンスターボール.png" />
     <Image Include="モンスターボール右上.png" />
+    <Image Include="攻撃時下画面.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

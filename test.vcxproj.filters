@@ -98,5 +98,8 @@
     <Image Include="ゆきぷりん_小.png">
       <Filter>リソース ファイル</Filter>
     </Image>
+    <Image Include="攻撃時下画面.jpg">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
 </Project>
