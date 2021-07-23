@@ -151,12 +151,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	
 	//初期画面（変更しない）------------------------------------------------------------------
+	SetOutApplicationLogValidFlag(FALSE); //ログ出力無効
 	SetMainWindowText("Nintendo DS Lite");
 	ChangeWindowMode(TRUE);//ウィンドウモードで起動
 	SetGraphMode(650, 700, 32); //画面の解像度指定　　
 	SetBackgroundColor(255, 255, 255);
 	SetWindowSizeChangeEnableFlag(FALSE); //画面サイズ変更不可
-	SetOutApplicationLogValidFlag(FALSE); //ログ出力無効
+	
 
 	// ＤＸライブラリ初期化処理---------------------------------------------------------------
 	if (DxLib_Init() == -1)
