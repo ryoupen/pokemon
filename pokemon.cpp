@@ -336,7 +336,7 @@ void PokemonCreate(Pokemon* pokemon, Move* Move_Machine) {
 	pokemon[5] = { "クロネコ",		"picture/クロネコ.png",			"picture/クロネコ_小.png",		闇,			220,220, 85,40,290,Move_Machine[17],Move_Machine[2], Move_Machine[15],Move_Machine[18] };
 	pokemon[6] = { "せいじ",		"picture/せいじ.png",			"picture/せいじ_小.png",		水,			100,100, 90, 1,300,Move_Machine[19],Move_Machine[20],Move_Machine[21],Move_Machine[22] };
 	pokemon[7] = { "ゆきぷりん",	"picture/ゆきぷりん.png",		"picture/ゆきぷりん_小.png",	光,			295,295,120,40,250,Move_Machine[23],Move_Machine[0], Move_Machine[0], Move_Machine[0] };
-	pokemon[9] = { "-" };
+	pokemon[9] = { "-",				"picture/無.png",				"picture/無.png", };
 }
 
 //画面1描画処理--------------------------------------------------------------------------------------------------------
@@ -700,19 +700,19 @@ int Select1(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 		if (cursor == 1) {
 			Screen1();
 			//DrawBoxAA(180, 450, 470, 580, Yl, FALSE);
-			LoadGraphScreen(180 - 18, 450 - 18, "カーソル左上.png", TRUE);
-			LoadGraphScreen(470 - 2, 450 - 18, "カーソル右上.png", TRUE);
-			LoadGraphScreen(180 - 18, 580 - 2, "カーソル左下.png", TRUE);
-			LoadGraphScreen(470 - 2, 580 - 2, "カーソル右下.png", TRUE);
+			LoadGraphScreen(180 - 18, 450 - 18, "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(470 - 2, 450 - 18, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(180 - 18, 580 - 2, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(470 - 2, 580 - 2, "picture/カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 2) {
 			Screen1();
 			//DrawBoxAA(160, 600, 490, 650, Yl, FALSE);
-			LoadGraphScreen(160 , 600 , "カーソル左上.png", TRUE);
-			LoadGraphScreen(490 - 20 , 600 , "カーソル右上.png", TRUE);
-			LoadGraphScreen(160 , 650 - 20 , "カーソル左下.png", TRUE);
-			LoadGraphScreen(490 - 20 , 650 - 20 , "カーソル右下.png", TRUE);
+			LoadGraphScreen(160 , 600 , "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 20 , 600 , "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(160 , 650 - 20 , "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 20 , 650 - 20 , "picture/カーソル右下.png", TRUE);
 		}
 
 		//初期化
@@ -985,46 +985,46 @@ int Select2(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 		if (cursor == 1) {
 			Screen2(mypokemon);
 			//DrawBoxAA(165, 435, 320, 510, Yl, FALSE);
-			LoadGraphScreen(165 - 5 , 435 - 5 , "カーソル左上.png", TRUE);
-			LoadGraphScreen(320 - 15, 435 - 5, "カーソル右上.png", TRUE);
-			LoadGraphScreen(165 - 5 , 510 - 15, "カーソル左下.png", TRUE);
-			LoadGraphScreen(320 - 15, 510 - 15, "カーソル右下.png", TRUE);
+			LoadGraphScreen(165 - 5 , 435 - 5 , "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(320 - 15, 435 - 5, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(165 - 5 , 510 - 15, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(320 - 15, 510 - 15, "picture/カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 2) {
 			Screen2(mypokemon);
 			//DrawBoxAA(330, 435, 485, 510, Yl, FALSE);
-			LoadGraphScreen(330 - 5, 435 - 5, "カーソル左上.png", TRUE);
-			LoadGraphScreen(485 - 15, 435 - 5, "カーソル右上.png", TRUE);
-			LoadGraphScreen(330 - 5, 510 - 15, "カーソル左下.png", TRUE);
-			LoadGraphScreen(485 - 15, 510 - 15, "カーソル右下.png", TRUE);
+			LoadGraphScreen(330 - 5, 435 - 5, "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(485 - 15, 435 - 5, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(330 - 5, 510 - 15, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(485 - 15, 510 - 15, "picture/カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 3) {
 			Screen2(mypokemon);
 			//DrawBoxAA(165, 520, 320, 595, Yl, FALSE);
-			LoadGraphScreen(165 - 5, 520 - 5, "カーソル左上.png", TRUE);
-			LoadGraphScreen(320 - 15, 520 - 5, "カーソル右上.png", TRUE);
-			LoadGraphScreen(165 - 5, 595 - 15, "カーソル左下.png", TRUE);
-			LoadGraphScreen(320 - 15, 595 - 15, "カーソル右下.png", TRUE);
+			LoadGraphScreen(165 - 5, 520 - 5, "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(320 - 15, 520 - 5, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(165 - 5, 595 - 15, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(320 - 15, 595 - 15, "picture/カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 4) {
 			Screen2(mypokemon);
 			//DrawBoxAA(330, 520, 485, 595, Yl, FALSE);
-			LoadGraphScreen(330 - 5, 520 - 5, "カーソル左上.png", TRUE);
-			LoadGraphScreen(485 - 15, 520 - 5, "カーソル右上.png", TRUE);
-			LoadGraphScreen(330 - 5, 595 - 15, "カーソル左下.png", TRUE);
-			LoadGraphScreen(485 - 15, 595 - 15, "カーソル右下.png", TRUE);
+			LoadGraphScreen(330 - 5, 520 - 5, "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(485 - 15, 520 - 5, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(330 - 5, 595 - 15, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(485 - 15, 595 - 15, "picture/カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 5) {
 			Screen2(mypokemon);
 			//DrawBoxAA(160, 600, 490, 650, Yl, FALSE);
-			LoadGraphScreen(160, 600, "カーソル左上.png", TRUE);
-			LoadGraphScreen(490 - 20, 600, "カーソル右上.png", TRUE);
-			LoadGraphScreen(160, 650 - 20, "カーソル左下.png", TRUE);
-			LoadGraphScreen(490 - 20, 650 - 20, "カーソル右下.png", TRUE);
+			LoadGraphScreen(160, 600, "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 20, 600, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(160, 650 - 20, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 20, 650 - 20, "picture/カーソル右下.png", TRUE);
 		}
 
 		//初期化
@@ -1355,65 +1355,65 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 		if (cursor == 1) {
 			Screen3(mypokemon);
 			//DrawBoxAA(160, 410, 323, 470, Yl, FALSE);
-			LoadGraphScreen(160 , 410 , "カーソル左上.png", TRUE);
-			LoadGraphScreen(323 - 20, 410 , "カーソル右上.png", TRUE);
-			LoadGraphScreen(160 , 470 - 20, "カーソル左下.png", TRUE);
-			LoadGraphScreen(323 - 20, 470 - 20, "カーソル右下.png", TRUE);
+			LoadGraphScreen(160 , 410 , "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(323 - 20, 410 , "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(160 , 470 - 20, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(323 - 20, 470 - 20, "picture/カーソル右下.png", TRUE);
 
 		}
 
 		else if (cursor == 2) {
 			Screen3(mypokemon);
 			//DrawBoxAA(327, 420, 490, 480, Yl, FALSE);
-			LoadGraphScreen(327, 420, "カーソル左上.png", TRUE);
-			LoadGraphScreen(490 - 20, 420, "カーソル右上.png", TRUE);
-			LoadGraphScreen(327, 480 - 20, "カーソル左下.png", TRUE);
-			LoadGraphScreen(490 - 20, 480 - 20, "カーソル右下.png", TRUE);
+			LoadGraphScreen(327, 420, "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 20, 420, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(327, 480 - 20, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 20, 480 - 20, "picture/カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 3) {
 			Screen3(mypokemon);
 			//DrawBoxAA(160, 475, 323, 535, Yl, FALSE);
-			LoadGraphScreen(160, 475, "カーソル左上.png", TRUE);
-			LoadGraphScreen(323 - 20, 475, "カーソル右上.png", TRUE);
-			LoadGraphScreen(160, 535 - 20, "カーソル左下.png", TRUE);
-			LoadGraphScreen(323 - 20, 535 - 20, "カーソル右下.png", TRUE);
+			LoadGraphScreen(160, 475, "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(323 - 20, 475, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(160, 535 - 20, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(323 - 20, 535 - 20, "picture/カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 4) {
 			Screen3(mypokemon);
 			//DrawBoxAA(327, 485, 490, 545, Yl, FALSE);
-			LoadGraphScreen(327, 485, "カーソル左上.png", TRUE);
-			LoadGraphScreen(490 - 20, 485, "カーソル右上.png", TRUE);
-			LoadGraphScreen(327, 545 - 20, "カーソル左下.png", TRUE);
-			LoadGraphScreen(490 - 20, 545 - 20, "カーソル右下.png", TRUE);
+			LoadGraphScreen(327, 485, "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 20, 485, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(327, 545 - 20, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 20, 545 - 20, "picture/カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 5) {
 			Screen3(mypokemon);
 			//DrawBoxAA(160, 540, 323, 600, Yl, FALSE);
-			LoadGraphScreen(160, 540, "カーソル左上.png", TRUE);
-			LoadGraphScreen(323 - 20, 540, "カーソル右上.png", TRUE);
-			LoadGraphScreen(160, 600 - 20, "カーソル左下.png", TRUE);
-			LoadGraphScreen(323 - 20, 600 - 20, "カーソル右下.png", TRUE);
+			LoadGraphScreen(160, 540, "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(323 - 20, 540, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(160, 600 - 20, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(323 - 20, 600 - 20, "picture/カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 6) {
 			Screen3(mypokemon);
 			//DrawBoxAA(327, 550, 490, 610, Yl, FALSE);
-			LoadGraphScreen(327, 550, "カーソル左上.png", TRUE);
-			LoadGraphScreen(490 - 20, 550, "カーソル右上.png", TRUE);
-			LoadGraphScreen(327, 610 - 20, "カーソル左下.png", TRUE);
-			LoadGraphScreen(490 - 20, 610 - 20, "カーソル右下.png", TRUE);
+			LoadGraphScreen(327, 550, "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 20, 550, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(327, 610 - 20, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 20, 610 - 20, "picture/カーソル右下.png", TRUE);
 		}
 
 		else if (cursor == 7) {
 			Screen3(mypokemon);
 			//DrawBoxAA(410, 620, 490, 650, Yl, FALSE);
-			LoadGraphScreen(410 - 5, 620 - 5, "カーソル左上.png", TRUE);
-			LoadGraphScreen(490 - 15, 620 - 5, "カーソル右上.png", TRUE);
-			LoadGraphScreen(410 - 5, 650 - 15, "カーソル左下.png", TRUE);
-			LoadGraphScreen(490 - 15, 650 - 15, "カーソル右下.png", TRUE);
+			LoadGraphScreen(410 - 5, 620 - 5, "picture/カーソル左上.png", TRUE);
+			LoadGraphScreen(490 - 15, 620 - 5, "picture/カーソル右上.png", TRUE);
+			LoadGraphScreen(410 - 5, 650 - 15, "picture/カーソル左下.png", TRUE);
+			LoadGraphScreen(490 - 15, 650 - 15, "picture/カーソル右下.png", TRUE);
 		}
 
 		//初期化

@@ -92,13 +92,16 @@
     <Image Include="picture\攻撃時下画面.jpg">
       <Filter>リソース ファイル</Filter>
     </Image>
-    <Image Include="picture\DS_BIOS.jpg">
-      <Filter>リソース ファイル</Filter>
-    </Image>
     <Image Include="picture\meta.png">
       <Filter>リソース ファイル</Filter>
     </Image>
     <Image Include="picture\show.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="picture\DS_BIOS.jpg">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="picture\無.png">
       <Filter>リソース ファイル</Filter>
     </Image>
   </ItemGroup>
