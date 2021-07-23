@@ -70,6 +70,9 @@ int EnemyPokemon_flg = 0;
 //味方ポケモンが死んだときのポケモン交換時フラグ
 int mypokemon_die_flg = 0;
 
+//プログラム終了
+int end_flg = 0;
+
 //属性
 enum Element{ノーマル,火,水,草,光,闇};
 
@@ -142,96 +145,110 @@ unsigned int  ColorChange(int ColorNumber);
 //上記共通のため変更しない------------------------------------------------------------------------------------------------------------
 
 
-
 // プログラムは WinMain から始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 
+	
 	//初期画面（変更しない）------------------------------------------------------------------
 	SetMainWindowText("Nintendo DS Lite");
 	ChangeWindowMode(TRUE);//ウィンドウモードで起動
 	SetGraphMode(650, 700, 32); //画面の解像度指定　　
 	SetBackgroundColor(255, 255, 255);
 	SetWindowSizeChangeEnableFlag(FALSE); //画面サイズ変更不可
+	SetOutApplicationLogValidFlag(FALSE); //ログ出力無効
 
 	// ＤＸライブラリ初期化処理---------------------------------------------------------------
 	if (DxLib_Init() == -1)
 	{
-		return -1;    // エラーが起きたら直ちに終了
+		return EXIT_FAILURE;    // エラーが起きたら直ちに終了
 	}
 
-	//起動音----------------------------------------------------------------------------------
-	PlaySoundFile("DS起動音.mp3", DX_PLAYTYPE_BACK);
+	while (ProcessMessage() == 0 && end_flg == 0) {
 
-	//技生成
-	Move Move_Machine[MoveNum];
-	MoveCreate(Move_Machine);
+		//[×]ボタンで消せないようにする（タスクが残るため）
+		SetWindowUserCloseEnableFlag(FALSE);
 
-	//ポケモン生成
-	Pokemon pokemon[PokeNum];
-	PokemonCreate(pokemon,Move_Machine);
+		//起動音----------------------------------------------------------------------------------
+		PlaySoundFile("DS起動音.mp3", DX_PLAYTYPE_BACK);
 
-	MyPokemon mypokemon[MAXPokemon] = { pokemon[0],pokemon[1],pokemon[2],pokemon[3],pokemon[9],pokemon[9] };
-	EnemyPokemon enemypokemon[MAXPokemon] = { pokemon[4],pokemon[5],pokemon[6],pokemon[7],pokemon[9],pokemon[9] };
+		//技生成
+		Move Move_Machine[MoveNum];
+		MoveCreate(Move_Machine);
 
-	//画面初期化------------------------------------------------------------------------------
-	ScreenReset(mypokemon,enemypokemon);
+		//ポケモン生成
+		Pokemon pokemon[PokeNum];
+		PokemonCreate(pokemon, Move_Machine);
 
-	//トレーナーの名前生成
-	Trainer TrainerName[2] = { "野獣先輩","せいじ" };
-	SetFontSize(22);
-	DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ポケモントレーナーの %sが\nしょうぶを しかけてきた！", TrainerName[0]);
-	Abutton();
+		MyPokemon mypokemon[MAXPokemon] = { pokemon[0],pokemon[1],pokemon[2],pokemon[3],pokemon[9],pokemon[9] };
+		EnemyPokemon enemypokemon[MAXPokemon] = { pokemon[4],pokemon[5],pokemon[6],pokemon[7],pokemon[9],pokemon[9] };
 
-	SetFontSize(22);
-	LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, enemypokemon[EnemyPokemonNumber].pokemon.big_picture, TRUE);	//敵のポケモン画像
-	UpInitScreen(mypokemon, enemypokemon);
-	DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ポケモントレーナーの %sは\n%sを くりだした！", TrainerName[0], enemypokemon[EnemyPokemonNumber].pokemon.name);
-	EnemyTextHpgauge(enemypokemon);
-	Abutton();
+		//画面初期化------------------------------------------------------------------------------
+		ScreenReset(mypokemon, enemypokemon);
 
-	SetFontSize(22);
-	LoadGraphScreen(UP_x1 + 35, UP_y1 + 80, mypokemon[MyPokemonNumber].pokemon.big_picture, TRUE);	//味方のポケモン画像
-	UpInitScreen(mypokemon, enemypokemon);
-	DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ゆけっ！ %s！", mypokemon[MyPokemonNumber].pokemon.name);
-	MyTextHpgauge(mypokemon);
-	Abutton();
-
-	SetFontSize(22);
-
-	//画面選択(初期画面(1))
-	int flg = 1;
-
-	//戦闘ループ
-	while(1) {
-		
+		//トレーナーの名前生成
+		Trainer TrainerName[2] = { "野獣先輩","せいじ" };
 		SetFontSize(22);
-		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sはどうする？", mypokemon[MyPokemonNumber].pokemon.name);
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ポケモントレーナーの %sが\nしょうぶを しかけてきた！", TrainerName[0]);
+		Abutton();
 
-		//flg=1の時、画面1に移動
-		if (flg == 1) {
-			Screen1();
-			flg = Select1(flg, mypokemon, enemypokemon);
-		}
+		SetFontSize(22);
+		LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, enemypokemon[EnemyPokemonNumber].pokemon.big_picture, TRUE);	//敵のポケモン画像
+		UpInitScreen(mypokemon, enemypokemon);
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ポケモントレーナーの %sは\n%sを くりだした！", TrainerName[0], enemypokemon[EnemyPokemonNumber].pokemon.name);
+		EnemyTextHpgauge(enemypokemon);
+		Abutton();
 
-		//flg=2の時、画面2に移動
-		else if (flg == 2) {
-			Screen2(mypokemon);
-			flg = Select2(flg, mypokemon, enemypokemon);
-		}
+		SetFontSize(22);
+		LoadGraphScreen(UP_x1 + 35, UP_y1 + 80, mypokemon[MyPokemonNumber].pokemon.big_picture, TRUE);	//味方のポケモン画像
+		UpInitScreen(mypokemon, enemypokemon);
+		DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "ゆけっ！ %s！", mypokemon[MyPokemonNumber].pokemon.name);
+		MyTextHpgauge(mypokemon);
+		Abutton();
 
-		//flg=3の時、画面3に移動
-		else if (flg == 3) {
-			Screen3(mypokemon);
-			flg = Select3(flg, mypokemon, enemypokemon);
+		SetFontSize(22);
+
+		//画面選択(初期画面(1))
+		int flg = 1;
+
+		//戦闘ループ
+		while (1) {
+			
+			SetFontSize(22);
+			DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
+			DrawFormatString(UP_x1 + 10, UP_y1 + 190 + 5, Bk, "%sはどうする？", mypokemon[MyPokemonNumber].pokemon.name);
+
+			//プログラム終了
+			if (flg == 0) {
+				end_flg = 1;
+				break;
+			}
+
+			//flg=1の時、画面1に移動
+			else if (flg == 1) {
+				Screen1();
+				flg = Select1(flg, mypokemon, enemypokemon);
+			}
+
+			//flg=2の時、画面2に移動
+			else if (flg == 2) {
+				Screen2(mypokemon);
+				flg = Select2(flg, mypokemon, enemypokemon);
+			}
+
+			//flg=3の時、画面3に移動
+			else if (flg == 3) {
+				Screen3(mypokemon);
+				flg = Select3(flg, mypokemon, enemypokemon);
+			}
+
 		}
 
 	}
 
 	// ＤＸライブラリ使用の終了処理
 	DxLib_End();
-	return 0; 
+	return EXIT_SUCCESS; 
 }
 
 void ScreenReset(MyPokemon* mypokemon,EnemyPokemon* enemypokemon){
@@ -265,7 +282,7 @@ void ScreenReset(MyPokemon* mypokemon,EnemyPokemon* enemypokemon){
 
 	//下画面描画------------------------------------------------------------
 	DrawBoxAA(150, 390, 500, 660, Bk, FALSE);	//下画面外枠
-
+	LoadGraphScreen(DW_x1, DW_y1, "picture/攻撃時下画面.jpg", FALSE);	//背景画像
 	DrawBoxAA(63, 460, 87, 540, Bk, FALSE);		//十字縦
 	DrawBoxAA(35, 488, 115, 512, Bk, FALSE);	//十字横
 	DrawBoxAA(63, 488, 87, 512, Wh, FALSE);		//十字真ん中
@@ -611,6 +628,14 @@ int Select1(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 
 	while (1) {
 
+		//[×]ボタン処理
+		if (GetWindowUserCloseFlag(TRUE)) {
+			if (MessageBox(GetMainWindowHandle(), _T("終了しますか？"), _T("確認"), MB_YESNO) == IDYES) {
+				flg = 0;
+				return flg;
+			}
+		}
+
 		// マウス判定
 		GetMouseInputLog2(&MouseInput, &MouseX, &MouseY, &LogType, TRUE);
 
@@ -739,6 +764,14 @@ int Select2(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 	int cursor = 1;
 
 	while (1) {
+
+		//[×]ボタン処理
+		if (GetWindowUserCloseFlag(TRUE)) {
+			if (MessageBox(GetMainWindowHandle(), _T("終了しますか？"), _T("確認"), MB_YESNO) == IDYES) {
+				flg = 0; 
+				return flg;
+			}
+		}
 
 		// マウス判定
 		GetMouseInputLog2(&MouseInput, &MouseX, &MouseY, &LogType, TRUE);
@@ -1054,6 +1087,14 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 	int cursor = 1;
 
 	while (1) {
+
+		//[×]ボタン処理
+		if (GetWindowUserCloseFlag(TRUE)) {
+			if (MessageBox(GetMainWindowHandle(), _T("終了しますか？"), _T("確認"), MB_YESNO) == IDYES) {
+				flg = 0;
+				return flg;
+			}
+		}
 
 		// マウス判定
 		GetMouseInputLog2(&MouseInput, &MouseX, &MouseY, &LogType, TRUE);
@@ -1430,7 +1471,7 @@ int Select3(int flg, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 
 void TurnCheck(MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 
-	LoadGraphScreen(DW_x1, DW_y1, "攻撃時下画面.jpg", TRUE);	//背景画像
+	LoadGraphScreen(DW_x1, DW_y1, "picture/攻撃時下画面.jpg", TRUE);	//背景画像
 
 	srand((unsigned)time(NULL));
 	float MySPD = ((rand() % 600 * 0.001) + 0.7) * (mypokemon[MyPokemonNumber].pokemon.SPD);
@@ -1495,7 +1536,7 @@ void TurnCheck(MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 
 void MyPokemonChange(int MyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 	
-	LoadGraphScreen(DW_x1, DW_y1, "攻撃時下画面.jpg", TRUE);	//背景画像
+	LoadGraphScreen(DW_x1, DW_y1, "picture/攻撃時下画面.jpg", TRUE);	//背景画像
 
 	if (mypokemon[MyPokemonChangeNumber].pokemon.MAXHP != 0) {
 
@@ -1507,7 +1548,7 @@ void MyPokemonChange(int MyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokem
 		MyPokemonNumber = MyPokemonChangeNumber;
 
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-		LoadGraphScreen(UP_x1, UP_y1, "ビーチ.jpg", FALSE);	//背景画像
+		LoadGraphScreen(UP_x1, UP_y1, "picture/ビーチ.jpg", FALSE);	//背景画像
 		LoadGraphScreen(UP_x1 + 35, UP_y1 + 80, mypokemon[MyPokemonNumber].pokemon.big_picture, TRUE);	//味方のポケモン画像
 		LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, enemypokemon[EnemyPokemonNumber].pokemon.big_picture, TRUE);	//敵のポケモン画像
 		UpInitScreen(mypokemon, enemypokemon);
@@ -1525,7 +1566,7 @@ void MyPokemonChange(int MyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokem
 
 void EnemyPokemonChange(int EnemyPokemonChangeNumber, MyPokemon* mypokemon, EnemyPokemon* enemypokemon) {
 
-	LoadGraphScreen(DW_x1, DW_y1, "攻撃時下画面.jpg", TRUE);	//背景画像
+	LoadGraphScreen(DW_x1, DW_y1, "picture/攻撃時下画面.jpg", TRUE);	//背景画像
 
 	if (enemypokemon[EnemyPokemonChangeNumber].pokemon.MAXHP != 0) {
 
@@ -1537,7 +1578,7 @@ void EnemyPokemonChange(int EnemyPokemonChangeNumber, MyPokemon* mypokemon, Enem
 		EnemyPokemonNumber++;
 
 		DrawBoxAA(UP_x1 + 5, UP_y1 + 190 + 5, UP_x2 - 5, UP_y2 - 5, Wh, TRUE);	//テキスト部
-		LoadGraphScreen(UP_x1, UP_y1, "ビーチ.jpg", FALSE);	//背景画像
+		LoadGraphScreen(UP_x1, UP_y1, "picture/ビーチ.jpg", FALSE);	//背景画像
 		LoadGraphScreen(UP_x1 + 35, UP_y1 + 80, mypokemon[MyPokemonNumber].pokemon.big_picture, TRUE);	//味方のポケモン画像
 		LoadGraphScreen(UP_x1 + 200, UP_y1 + 10, enemypokemon[EnemyPokemonNumber].pokemon.big_picture, TRUE);	//敵のポケモン画像
 		UpInitScreen(mypokemon, enemypokemon);
@@ -1666,6 +1707,14 @@ void Abutton() {
 	int	a = 0;
 
 	while (1) {
+
+		//[×]ボタン処理
+		if (GetWindowUserCloseFlag(TRUE)) {
+			if (MessageBox(GetMainWindowHandle(), _T("終了しますか？"), _T("確認"), MB_YESNO) == IDYES) {
+				DxLib_End();
+				exit(0);
+			}
+		}
 
 		// マウス判定
 		GetMouseInputLog2(&MouseInput, &MouseX, &MouseY, &LogType, TRUE);
