@@ -241,7 +241,7 @@ void ScreenReset(MyPokemon* mypokemon,EnemyPokemon* enemypokemon){
 
 	//上画面描画------------------------------------------------------------
 	DrawBoxAA(150, 30, 500, 300, Bk, FALSE);	//上画面外枠
-	LoadGraphScreen(UP_x1, UP_y1, "ビーチ.jpg", FALSE);	//背景画像
+	LoadGraphScreen(UP_x1, UP_y1, "picture/ビーチ.jpg", FALSE);	//背景画像
 	UpInitScreen(mypokemon, enemypokemon);	//上画面テキスト部
 	DrawBoxAA(UP_x1, UP_y1, UP_x2, UP_y2, Bk, FALSE);	//上画面内枠
 
@@ -328,14 +328,14 @@ void MoveCreate(Move* Move_Machine) {
 }
 
 void PokemonCreate(Pokemon* pokemon, Move* Move_Machine) {
-	pokemon[0] = { "メタゴン",		"メタゴン.png",			"メタゴン_小.png",		ノーマル,	250,250, 95,50,200,Move_Machine[1], Move_Machine[0], Move_Machine[0], Move_Machine[0] };
-	pokemon[1] = { "ゴールドシップ","ゴールドシップ.png",	"ゴールドシップ_小.png",光,			280,280,120,30,300,Move_Machine[2], Move_Machine[3], Move_Machine[4], Move_Machine[5] };
-	pokemon[2] = { "かぼやん",		"かぼやん.png",			"かぼやん_小.png",		草,			290,290, 80,65,250,Move_Machine[6], Move_Machine[7], Move_Machine[8], Move_Machine[9] };
-	pokemon[3] = { "ビリオン",		"ビリオン.png",			"ビリオン_小.png",		光,			275,275, 90,50,275,Move_Machine[10],Move_Machine[11],Move_Machine[12],Move_Machine[13] };
-	pokemon[4] = { "オラポン",		"オラポン.png",			"オラポン_小.png",		火,			250,250, 80,40,285,Move_Machine[3], Move_Machine[14],Move_Machine[15],Move_Machine[16] };
-	pokemon[5] = { "クロネコ",		"クロネコ.png",			"クロネコ_小.png",		闇,			220,220, 85,40,290,Move_Machine[17],Move_Machine[2], Move_Machine[15],Move_Machine[18] };
-	pokemon[6] = { "せいじ",		"せいじ.png",			"せいじ_小.png",		水,			100,100, 90, 1,300,Move_Machine[19],Move_Machine[20],Move_Machine[21],Move_Machine[22] };
-	pokemon[7] = { "ゆきぷりん",	"ゆきぷりん.png",		"ゆきぷりん_小.png",	光,			295,295,120,40,250,Move_Machine[23],Move_Machine[0], Move_Machine[0], Move_Machine[0] };
+	pokemon[0] = { "メタゴン",		"picture/メタゴン.png",			"picture/メタゴン_小.png",		ノーマル,	250,250, 95,50,200,Move_Machine[1], Move_Machine[0], Move_Machine[0], Move_Machine[0] };
+	pokemon[1] = { "ゴールドシップ","picture/ゴールドシップ.png",	"picture/ゴールドシップ_小.png",光,			280,280,120,30,300,Move_Machine[2], Move_Machine[3], Move_Machine[4], Move_Machine[5] };
+	pokemon[2] = { "かぼやん",		"picture/かぼやん.png",			"picture/かぼやん_小.png",		草,			290,290, 80,65,250,Move_Machine[6], Move_Machine[7], Move_Machine[8], Move_Machine[9] };
+	pokemon[3] = { "ビリオン",		"picture/ビリオン.png",			"picture/ビリオン_小.png",		光,			275,275, 90,50,275,Move_Machine[10],Move_Machine[11],Move_Machine[12],Move_Machine[13] };
+	pokemon[4] = { "オラポン",		"picture/オラポン.png",			"picture/オラポン_小.png",		火,			250,250, 80,40,285,Move_Machine[3], Move_Machine[14],Move_Machine[15],Move_Machine[16] };
+	pokemon[5] = { "クロネコ",		"picture/クロネコ.png",			"picture/クロネコ_小.png",		闇,			220,220, 85,40,290,Move_Machine[17],Move_Machine[2], Move_Machine[15],Move_Machine[18] };
+	pokemon[6] = { "せいじ",		"picture/せいじ.png",			"picture/せいじ_小.png",		水,			100,100, 90, 1,300,Move_Machine[19],Move_Machine[20],Move_Machine[21],Move_Machine[22] };
+	pokemon[7] = { "ゆきぷりん",	"picture/ゆきぷりん.png",		"picture/ゆきぷりん_小.png",	光,			295,295,120,40,250,Move_Machine[23],Move_Machine[0], Move_Machine[0], Move_Machine[0] };
 	pokemon[9] = { "-" };
 }
 
@@ -373,19 +373,19 @@ void Screen1() {
 	DrawBoxAA(160, 600, 490, 650, Bk, FALSE);
 	DrawBoxAA(170, 605, 480, 645, Dg, TRUE);
 	//・モンスターボール味方座標
-	LoadGraphScreen(165, 405, "モンスターボール.png", TRUE);
-	LoadGraphScreen(190, 405, "モンスターボール.png", TRUE);
-	LoadGraphScreen(215, 405, "モンスターボール.png", TRUE);
-	LoadGraphScreen(240, 405, "ボール.png", TRUE);
-	LoadGraphScreen(265, 405, "ボール.png", TRUE);
-	LoadGraphScreen(290, 405, "ボール.png", TRUE);
+	LoadGraphScreen(165, 405, "picture/モンスターボール.png", TRUE);
+	LoadGraphScreen(190, 405, "picture/モンスターボール.png", TRUE);
+	LoadGraphScreen(215, 405, "picture/モンスターボール.png", TRUE);
+	LoadGraphScreen(240, 405, "picture/ボール.png", TRUE);
+	LoadGraphScreen(265, 405, "picture/ボール.png", TRUE);
+	LoadGraphScreen(290, 405, "picture/ボール.png", TRUE);
 	//・モンスターボール敵座標
-	LoadGraphScreen(395, 405, "モンスターボール右上.png", TRUE);
-	LoadGraphScreen(410, 405, "モンスターボール右上.png", TRUE);
-	LoadGraphScreen(425, 405, "モンスターボール右上.png", TRUE);
-	LoadGraphScreen(440, 405, "ボール右上.png", TRUE);
-	LoadGraphScreen(455, 405, "ボール右上.png", TRUE);
-	LoadGraphScreen(470, 405, "ボール右上.png", TRUE);
+	LoadGraphScreen(395, 405, "picture/モンスターボール右上.png", TRUE);
+	LoadGraphScreen(410, 405, "picture/モンスターボール右上.png", TRUE);
+	LoadGraphScreen(425, 405, "picture/モンスターボール右上.png", TRUE);
+	LoadGraphScreen(440, 405, "picture/ボール右上.png", TRUE);
+	LoadGraphScreen(455, 405, "picture/ボール右上.png", TRUE);
+	LoadGraphScreen(470, 405, "picture/ボール右上.png", TRUE);
 
 	//下画面内枠
 	DrawBoxAA(DW_x1, DW_y1, DW_x2, DW_y2, Gl, FALSE);	

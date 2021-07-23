@@ -1,0 +1,105 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 日本語 (日本) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+#pragma code_page(932)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// picture
+//
+
+IDR_PICTURE1            picture                 "picture\\DS_BIOS.jpg"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG1                PNG                     "picture\\show.png"
+
+IDB_PNG2                PNG                     "picture\\オラポン.png"
+
+IDB_PNG3                PNG                     "picture\\オラポン_小.png"
+
+IDB_PNG4                PNG                     "picture\\カーソル右下.png"
+
+IDB_PNG5                PNG                     "picture\\カーソル右上.png"
+
+IDB_PNG6                PNG                     "picture\\カーソル左下.png"
+
+IDB_PNG7                PNG                     "picture\\カーソル左上.png"
+
+IDB_PNG8                PNG                     "picture\\かぼやん.png"
+
+IDB_PNG9                PNG                     "picture\\かぼやん_小.png"
+
+IDB_PNG10               PNG                     "picture\\クロネコ.png"
+
+IDB_PNG11               PNG                     "picture\\クロネコ_小.png"
+
+IDB_PNG12               PNG                     "picture\\ゴールドシップ.png"
+
+IDB_PNG13               PNG                     "picture\\ゴールドシップ_小.png"
+
+IDB_PNG14               PNG                     "picture\\せいじ.png"
+
+IDB_PNG15               PNG                     "picture\\せいじ_小.png"
+
+#endif    // 日本語 (日本) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
