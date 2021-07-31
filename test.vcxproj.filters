@@ -104,5 +104,8 @@
     <Image Include="picture\無.png">
       <Filter>リソース ファイル</Filter>
     </Image>
+    <Image Include="..\..\..\Desktop\プレゼント.JPG">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
 </Project>
